@@ -89,21 +89,28 @@ function popplgn_field_sanitize( $input ) {
     $output = array();
 //    MAKE A STATEMENT FOR EVERY ROW IN THE SETTINGS WITH VALIDATION FOR EACH ROW
 //   Loop through each of the incoming options
-    foreach ($input as $key => $value) {
-//        Check to see if the current option has a value. If so, process it.
-        if (isset($input[$key])) {
-//            Strip all HTML and PHP tags and properly handle quoted strings
-            $output[$key] = strip_tags(stripslashes($input[$key]));
-        }
-        else if( ! isset( $input['popplgn_esc_btn'] ) ||
-             ! isset( $input['popplgn_close_btn'] ) ||
-            ! isset($input['popplgn_overlay'] ) )
-        {
-            $input['popplgn_esc_btn'] = "0";
-            $input['popplgn_close_btn'] = "0";
-            $input['popplgn_overlay'] = "0";
-        }
-    }
+    $output['popplgn_title'] = strip_tags( stripslashes( $input['popplgn_title'] ) );
+    $output['popplgn_body'] = strip_tags( stripslashes( $input['popplgn_body'] ) );
+    $output['popplgn_delay'] = strip_tags( stripslashes( $input['popplgn_delay'] ) );
+    $output['popplgn_close_btn'] = isset( $input['popplgn_close_btn'] ) ? 1 : 0;
+    $output['popplgn_esc_btn'] = isset( $input['popplgn_esc_btn'] ) ? 1 : 0;
+    $output['popplgn_overlay'] = isset( $input['popplgn_overlay'] ) ? 1 : 0; 
+
+//     foreach ($input as $key => $value) {
+// //        Check to see if the current option has a value. If so, process it.
+//         if (isset($input[$key])) {
+// //            Strip all HTML and PHP tags and properly handle quoted strings
+//             $output[$key] = strip_tags(stripslashes($input[$key]));
+//         }
+//         else if( ! isset( $input['popplgn_esc_btn'] ) ||
+//              ! isset( $input['popplgn_close_btn'] ) ||
+//             ! isset($input['popplgn_overlay'] ) )
+//         {
+//             $input['popplgn_esc_btn'] = "0";
+//             $input['popplgn_close_btn'] = "0";
+//             $input['popplgn_overlay'] = "0";
+//         }
+//     }
 //    Return the array processing any additional functions filtered by this action
     return apply_filters('popplgn_field_sanitize', $output, $input);
 }
@@ -155,3 +162,10 @@ function popplgn_overlay_field() {
     $value = $options['popplgn_overlay'];
     echo '<input name="popplgn_options[popplgn_overlay]" id="popplgn_overlay" type="checkbox" value="' . $value . '"' . checked( 1, $value, false ) . '/>';
 }
+function popplgn_register_plugin_scripts() {
+    wp_register_script( 'popplgn-script', plugin_url( 'js/functions.js') );
+    wp_enqueue_script( 'popplgn-script' );
+    wp_register_style( 'popplgn-style', plugin_url( 'css/style.css') );
+    wp_enqueue_style( 'popplgn_style' );
+}
+add_action( 'wp_enqueue_scripts', 'popplgn_register_plugin_scripts' );
