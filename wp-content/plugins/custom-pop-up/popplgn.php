@@ -1,4 +1,5 @@
 <?php
+/*Plugin name: Pop-up menu*/
 function popplgn_page() {
     add_menu_page( 
         'Pop-up',
@@ -12,16 +13,16 @@ add_action( 'admin_menu', 'popplgn_page' );
 
 function popplgn_database() {
     $defaults = array(
-        'title' => 'Default Title',
-        'body' => 'Default body text',
-        'delay' => '10',
-        'close_btn' => '0',
-        'esc_btn' => '0',
-        'overlay_btn' => '0'
+        'popplgn_title' => 'Default Title',
+        'popplgn_body' => 'Default body text',
+        'popplgn_delay' => '10',
+        'popplgn_close_btn' => '1',
+        'popplgn_esc_btn' => '1',
+        'popplgn_overlay' => '0'
     );
     update_option( 'popplgn_options', $defaults );
 }
-add_action( 'plugins_loaded', 'popplgn_database' );
+register_activation_hook( __FILE__, 'popplgn_database' );
 function popplgn_fields_register() {
 
     add_settings_section(
@@ -79,13 +80,32 @@ function popplgn_fields_register() {
         'popplgn_settings_section'
     );
 
-    register_setting( 'popplgn_options','popplgn_options', 'popplgn_field_sanitize' );
+    register_setting( 'popplgn_options', 'popplgn_options', 'popplgn_field_sanitize' );
 }
 add_action( 'admin_init', 'popplgn_fields_register' );
 
-function popplgn_field_sanitize( $option ) {
-    $option = sanitize_text_field( $option );
-    return $option;
+function popplgn_field_sanitize( $input ) {
+//    Creating array for storing the validated options
+    $output = array();
+//    MAKE A STATEMENT FOR EVERY ROW IN THE SETTINGS WITH VALIDATION FOR EACH ROW
+//   Loop through each of the incoming options
+    foreach ($input as $key => $value) {
+//        Check to see if the current option has a value. If so, process it.
+        if (isset($input[$key])) {
+//            Strip all HTML and PHP tags and properly handle quoted strings
+            $output[$key] = strip_tags(stripslashes($input[$key]));
+        }
+        else if( ! isset( $input['popplgn_esc_btn'] ) ||
+             ! isset( $input['popplgn_close_btn'] ) ||
+            ! isset($input['popplgn_overlay'] ) )
+        {
+            $input['popplgn_esc_btn'] = "0";
+            $input['popplgn_close_btn'] = "0";
+            $input['popplgn_overlay'] = "0";
+        }
+    }
+//    Return the array processing any additional functions filtered by this action
+    return apply_filters('popplgn_field_sanitize', $output, $input);
 }
 function popplgn_display() {
     $text = '<div class="wrap">';
@@ -107,31 +127,31 @@ function popplgn_settings_content() {
 
 function popplgn_title_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['title'];
-    echo '<input name="popplgn-options[title]" id="popplgn_title" type="text" value="' . $value . '"/>';
+    $value = $options['popplgn_title'];
+    echo '<input name="popplgn_options[popplgn_title]" id="popplgn_title" type="text" value="' . $value . '"/>';
 }
 function popplgn_body_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['body'];
-    echo '<textarea name="popplgn-options[body]" id="popplgn_body">' . $value . '</textarea>';
+    $value = $options['popplgn_body'];
+    echo '<textarea name="popplgn_options[popplgn_body]" id="popplgn_body">' . sanitize_text_field( $value ) . '</textarea>';
 }
 function popplgn_delay_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['delay'];
-    echo '<input name="popplgn-options[delay]" id="popplgn_delay" type="text" value="' . $value . '"/>';
+    $value = $options['popplgn_delay'];
+    echo '<input name="popplgn_options[popplgn_delay]" id="popplgn_delay" type="text" value="' . $value . '"/>';
 }
 function popplgn_close_btn_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['close_btn'];
-    echo '<input name="popplgn-options[close_btn]" id="popplgn_close_btn" type="checkbox" value="0"' . checked( 1, $value, false ) . '/>';
+    $value = $options['popplgn_close_btn'];
+    echo '<input name="popplgn_options[popplgn_close_btn]" id="popplgn_close_btn" type="checkbox" value="' . $value . '"' . checked( 1, $value, false ) . '/>';
 }
 function popplgn_esc_btn_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['esc_btn'];
-    echo '<input name="popplgn-options[esc_btn]" id="popplgn_esc_btn" type="checkbox" value="0"' . checked( 1, $value, false ) . '/>';
+    $value = $options['popplgn_esc_btn'];
+    echo '<input name="popplgn_options[popplgn_esc_btn]" id="popplgn_esc_btn" type="checkbox" value="' . $value . '"' . checked( 1, $value, false ) . '/>';
 }
 function popplgn_overlay_field() {
     $options = get_option( 'popplgn_options' );
-    $value = $options['overlay_btn'];
-    echo '<input name="popplgn-options[overlay_btn]" id="popplgn_overlay" type="checkbox" value="0"' . checked( 1, $value, false ) . '/>';
+    $value = $options['popplgn_overlay'];
+    echo '<input name="popplgn_options[popplgn_overlay]" id="popplgn_overlay" type="checkbox" value="' . $value . '"' . checked( 1, $value, false ) . '/>';
 }
