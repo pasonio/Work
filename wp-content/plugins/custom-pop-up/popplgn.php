@@ -87,8 +87,7 @@ add_action( 'admin_init', 'popplgn_fields_register' );
 function popplgn_field_sanitize( $input ) {
 //    Creating array for storing the validated options
     $output = array();
-//    MAKE A STATEMENT FOR EVERY ROW IN THE SETTINGS WITH VALIDATION FOR EACH ROW
-//   Loop through each of the incoming options
+
     $output['popplgn_title'] = strip_tags( stripslashes( $input['popplgn_title'] ) );
     $output['popplgn_body'] = strip_tags( stripslashes( $input['popplgn_body'] ) );
     $output['popplgn_delay'] = strip_tags( stripslashes( $input['popplgn_delay'] ) );
@@ -96,23 +95,7 @@ function popplgn_field_sanitize( $input ) {
     $output['popplgn_esc_btn'] = isset( $input['popplgn_esc_btn'] ) ? 1 : 0;
     $output['popplgn_overlay'] = isset( $input['popplgn_overlay'] ) ? 1 : 0; 
 
-//     foreach ($input as $key => $value) {
-// //        Check to see if the current option has a value. If so, process it.
-//         if (isset($input[$key])) {
-// //            Strip all HTML and PHP tags and properly handle quoted strings
-//             $output[$key] = strip_tags(stripslashes($input[$key]));
-//         }
-//         else if( ! isset( $input['popplgn_esc_btn'] ) ||
-//              ! isset( $input['popplgn_close_btn'] ) ||
-//             ! isset($input['popplgn_overlay'] ) )
-//         {
-//             $input['popplgn_esc_btn'] = "0";
-//             $input['popplgn_close_btn'] = "0";
-//             $input['popplgn_overlay'] = "0";
-//         }
-//     }
-//    Return the array processing any additional functions filtered by this action
-    return apply_filters('popplgn_field_sanitize', $output, $input);
+    return $output;
 }
 function popplgn_display() {
     $text = '<div class="wrap">';
@@ -163,9 +146,23 @@ function popplgn_overlay_field() {
     echo '<input name="popplgn_options[popplgn_overlay]" id="popplgn_overlay" type="checkbox" value="' . $value . '"' . checked( 1, $value, false ) . '/>';
 }
 function popplgn_register_plugin_scripts() {
-    wp_register_script( 'popplgn-script', plugin_url( 'js/functions.js') );
+    $options = get_option( 'popplgn_options' );
+
+    wp_register_script( 'popplgn-script', plugins_url( 'custom-pop-up/js/functions.js' ), array( 'jquery', 'backbone' ) );
     wp_enqueue_script( 'popplgn-script' );
-    wp_register_style( 'popplgn-style', plugin_url( 'css/style.css') );
+    wp_register_style( 'popplgn-style', plugins_url( 'custom-pop-up/css/style.css' ) );
     wp_enqueue_style( 'popplgn_style' );
+//    Passing data to javascript files
+    wp_register_script( 'popplgn-js-pass', plugins_url( 'custom-pop-up/js/functions.js' ) );
+    $passing_array = array(
+        'popplgn_title' => $options['popplgn_title'],
+        'popplgn_body' => $options['popplgn_body'],
+        'popplgn_delay' => $options['popplgn_delay'],
+        'popplgn_close_btn' => $options['popplgn_close_btn'],
+        'popplgn_esc_btn' => $options['popplgn_esc_btn'],
+        'popplgn_overlay' => $options['popplgn_overlay']
+    );
+    wp_enqueue_script( 'popplgn-js-pass' );
+    wp_localize_script( 'popplgn-js-pass', 'popplgn_passed_data', $passing_array );
 }
 add_action( 'wp_enqueue_scripts', 'popplgn_register_plugin_scripts' );

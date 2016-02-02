@@ -42,12 +42,12 @@ function create_post_type() {
 function test_scripts() {
 	/*Load Bootstrap's styles*/
 	wp_enqueue_style( 'style-tb-test', get_template_directory_uri() . '/css/bootstrap.min.css');
-	/*Load Bootstrap's scripts*/
-	wp_enqueue_script( 'script-tb-test', get_template_directory_uri() . '/js/bootstrap.min.js');
 	/*Load main stylesheet*/
 	wp_enqueue_style( 'style-test', get_stylesheet_uri() );
 	/*Load main js file*/
 	wp_enqueue_script( 'script-test', get_template_directory_uri() . '/js/main.js', array( 'jquery' ) );
+	/*Load Bootstrap's scripts*/
+	wp_enqueue_script( 'script-tb-test', get_template_directory_uri() . '/js/bootstrap.min.js');
 	/*Load text message for js scripts*/
 	$text_array = array(
 		'text_message' => __( "Hi I'm from PHP side.", "test")
