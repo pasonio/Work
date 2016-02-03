@@ -1,5 +1,4 @@
-( function( $ ) {
-    //alert(popplgn_passed_data.popplgn_title);
+jQuery(document).ready(function($) {
     var popup = Backbone.Model.extend({
         defaults: {
             title: "Default Title",
@@ -9,8 +8,10 @@
             esc_button: "1",
             overlay: "0"
         },
-        initialize: function() {
-
+        validate: function( attrs ) {
+            if ( attrs.delay <= 0 ) {
+                alert( 'The number must be positive.' );
+            }
         }
     });
     var new_options = new popup({
@@ -29,4 +30,15 @@
     var esc_btn = new_options.get( "esc_button" );
     var close_overlay = new_options.get( "overlay" );
 
-} )( jQuery );
+     var menuView = Backbone.View.extend( {
+         el: "body",
+         initialize: function() {
+             this.render();
+         },
+         template: _.template( popup.toJSON(  ).html()  ),
+         render: function() {
+             this.$el.html( this.template );
+         }
+     });
+    var menu_view = new menuView();
+});

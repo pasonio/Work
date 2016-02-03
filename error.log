@@ -5444,3 +5444,9 @@
 [Tue Feb 02 15:34:49.784594 2016] [:error] [pid 1623] [client 127.0.0.1:40445] PHP   2. require_once() /home/dev55/www/test.loc/wp-admin/admin-ajax.php:22, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
 [Tue Feb 02 15:34:49.784603 2016] [:error] [pid 1623] [client 127.0.0.1:40445] PHP   3. require_once() /home/dev55/www/test.loc/wp-load.php:37, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
 [Tue Feb 02 15:34:49.784611 2016] [:error] [pid 1623] [client 127.0.0.1:40445] PHP   4. require_once() /home/dev55/www/test.loc/wp-config.php:90, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.775030 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP Parse error:  syntax error, unexpected '{', expecting '(' in /home/dev55/www/test.loc/wp-content/plugins/custom-pop-up/popplgn.php on line 157, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.788268 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP Stack trace:, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.788304 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP   1. {main}() /home/dev55/www/test.loc/wp-admin/admin-ajax.php:0, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.788316 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP   2. require_once() /home/dev55/www/test.loc/wp-admin/admin-ajax.php:22, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.788325 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP   3. require_once() /home/dev55/www/test.loc/wp-load.php:37, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page
+[Wed Feb 03 09:32:58.788334 2016] [:error] [pid 2983] [client 127.0.0.1:38452] PHP   4. require_once() /home/dev55/www/test.loc/wp-config.php:90, referer: http://test.loc/wp-admin/admin.php?page=popplgn_page

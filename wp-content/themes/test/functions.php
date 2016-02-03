@@ -71,6 +71,8 @@ function foobar_func( $atts ) {
 function custom_excerpt_lenght( $lenght ) {
 	return 20;
 }
+
+
 add_action( 'after_setup_theme', 'menu_registration' );
 add_action( 'wp_enqueue_scripts', 'test_scripts' );
 add_action ( 'widgets_init', 'test_widgets_init' );

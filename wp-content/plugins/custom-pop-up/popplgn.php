@@ -148,12 +148,9 @@ function popplgn_overlay_field() {
 function popplgn_register_plugin_scripts() {
     $options = get_option( 'popplgn_options' );
 
-    wp_register_script( 'popplgn-script', plugins_url( 'custom-pop-up/js/functions.js' ), array( 'jquery', 'backbone' ) );
-    wp_enqueue_script( 'popplgn-script' );
     wp_register_style( 'popplgn-style', plugins_url( 'custom-pop-up/css/style.css' ) );
     wp_enqueue_style( 'popplgn_style' );
-//    Passing data to javascript files
-    wp_register_script( 'popplgn-js-pass', plugins_url( 'custom-pop-up/js/functions.js' ) );
+    //    Passing data to javascript files
     $passing_array = array(
         'popplgn_title' => $options['popplgn_title'],
         'popplgn_body' => $options['popplgn_body'],
@@ -162,7 +159,11 @@ function popplgn_register_plugin_scripts() {
         'popplgn_esc_btn' => $options['popplgn_esc_btn'],
         'popplgn_overlay' => $options['popplgn_overlay']
     );
-    wp_enqueue_script( 'popplgn-js-pass' );
+    wp_enqueue_script( 'popplgn-js-pass', plugins_url( 'custom-pop-up/js/functions.js' ), array( 'jquery', 'backbone', 'underscore') );
     wp_localize_script( 'popplgn-js-pass', 'popplgn_passed_data', $passing_array );
 }
 add_action( 'wp_enqueue_scripts', 'popplgn_register_plugin_scripts' );
+function render_template(){
+    include('menu.php');
+}
+add_action('wp_footer','render_template');
