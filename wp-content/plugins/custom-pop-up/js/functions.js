@@ -24,7 +24,18 @@ jQuery(document).ready(function($) {
             this.render();
          },
         render: function() {
-             this.$el.html( this.template( this.model.toJSON() ) );
+            _.delay( $('#popplgn_menu_template').html(), 5000 );
+            this.$el.html( this.template( this.model.toJSON() ) );
+        },
+        events: {
+            "keydown" : 'keydownHandler',
+            "click #popplgn_close" : 'closeIcon',
+        },
+        keydownHandler: function() {
+
+        },
+        closeIcon: function() {
+
         }
     });
     var new_options = new popup({
@@ -37,6 +48,6 @@ jQuery(document).ready(function($) {
         overlay: popplgn_passed_data.popplgn_overlay
     });
     var menu_view = new menuView(new_options);
-    _.delay( menu_view.template, new_options['delay'] );
+    _.delay( menu_view.template, 10 );
     $('.header').append(menu_view.$el.html());
 });
