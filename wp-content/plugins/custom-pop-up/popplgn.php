@@ -15,6 +15,7 @@ function popplgn_database() {
     $defaults = array(
         'popplgn_title' => 'Default Title',
         'popplgn_body' => 'Default body text',
+        'popplgn_display_time' => '10',
         'popplgn_delay' => '10',
         'popplgn_close_btn' => '1',
         'popplgn_esc_btn' => '1',
@@ -48,6 +49,13 @@ function popplgn_fields_register() {
         'popplgn_settings_section'
     );
 
+    add_settings_field(
+        'popplgn_display_time',
+        'Display time',
+        'popplgn_display_time',
+        'popplgn_options',
+        'popplgn_settings_section'
+    );
     add_settings_field(
         'popplgn_delay',
         'Time of delay',
@@ -90,6 +98,7 @@ function popplgn_field_sanitize( $input ) {
 
     $output['popplgn_title'] = strip_tags( stripslashes( $input['popplgn_title'] ) );
     $output['popplgn_body'] = strip_tags( stripslashes( $input['popplgn_body'] ) );
+    $output['popplgn_display_time'] = strip_tags( stripslashes( $input['popplgn_display_time'] ) );
     $output['popplgn_delay'] = strip_tags( stripslashes( $input['popplgn_delay'] ) );
     $output['popplgn_close_btn'] = isset( $input['popplgn_close_btn'] ) ? 1 : 0;
     $output['popplgn_esc_btn'] = isset( $input['popplgn_esc_btn'] ) ? 1 : 0;
@@ -125,6 +134,11 @@ function popplgn_body_field() {
     $value = $options['popplgn_body'];
     echo '<textarea name="popplgn_options[popplgn_body]" id="popplgn_body">' . sanitize_text_field( $value ) . '</textarea>';
 }
+function popplgn_display_time() {
+    $options = get_option( 'popplgn_options' );
+    $value = $options['popplgn_display_time'];
+    echo '<input name="popplgn_options[popplgn_display_time]" id="popplgn_display_time" type="text" value="' . $value . '"/>';
+}
 function popplgn_delay_field() {
     $options = get_option( 'popplgn_options' );
     $value = $options['popplgn_delay'];
@@ -148,13 +162,13 @@ function popplgn_overlay_field() {
 function popplgn_register_plugin_scripts() {
     $options = get_option( 'popplgn_options' );
 
-    wp_register_style( 'popplgn-style', plugins_url( 'custom-pop-up/css/style.css' ) );
-    wp_enqueue_style( 'popplgn_style' );
+    wp_enqueue_style( 'popplgn_style', plugins_url( 'custom-pop-up/css/style.css' ) );
     //    Passing data to javascript files
     $passing_array = array(
         'popplgn_title' => $options['popplgn_title'],
         'popplgn_body' => $options['popplgn_body'],
         'popplgn_delay' => $options['popplgn_delay'],
+        'popplgn_display_time' => $options['popplgn_display_time'],
         'popplgn_close_btn' => $options['popplgn_close_btn'],
         'popplgn_esc_btn' => $options['popplgn_esc_btn'],
         'popplgn_overlay' => $options['popplgn_overlay']
