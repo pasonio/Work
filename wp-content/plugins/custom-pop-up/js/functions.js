@@ -31,14 +31,14 @@ jQuery(document).ready(function($) {
     var close_overlay = new_options.get( "overlay" );
 
      var menuView = Backbone.View.extend( {
-         el: "body",
+         el: "#popplgn_menu_template",
+         template: _.template( JSON.stringify( menu_title, menu_body ) ),
          initialize: function() {
-             this.render();
+            this.render();
          },
-         template: _.template( popup.toJSON(  ).html()  ),
-         render: function() {
-             this.$el.html( this.template );
-         }
-     });
+        render: function() {
+             this.$el.html( this.template );    
+        }
+    });
     var menu_view = new menuView();
 });
