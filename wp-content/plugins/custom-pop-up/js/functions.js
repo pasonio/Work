@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
             //increasing counter by 1
             increase: function () {
                 this.set('counter', this.get('counter')+1);
-            }
+            },
     });
      var menuView = Backbone.View.extend( {
          model: null,
@@ -33,27 +33,28 @@ jQuery(document).ready(function($) {
                  this.model.increase();
              }, this), 1000 );
          },
+         events: {
+            "keydown" : 'keydownHandler',
+            "click #popplgn_close" : 'closeIcon',
+            "change:counter" : 'change'
+        },
         render: function() {
             this.$el.html( this.template( this.model.toJSON() ) );
         },
-        events: {
-            "keydown" : 'keydownHandler',
-            "click #popplgn_close" : 'closeIcon',
-            "change this.render" : 'change'
-        },
-        keydownHandler: function( event ) {
-            if( event.keyCode === 27 ) {
+        keydownHandler: function( e ) {
+            if( e.keyCode === 27 ) {
                 this.remove();
             }
         },
         closeIcon: function() {
-
+            this.remove();
         },
         change: function( model, value, options ) {
             //rendering counter in browsers log
             console.log(model.get('counter'));
             // setting statement for open
-            if (value == new_options.get('delay') ) {
+            if ( value == new_options.get('delay') ) {
+                // alert( "test" );
                 this.render();
             }
             //    setting statement for closing
