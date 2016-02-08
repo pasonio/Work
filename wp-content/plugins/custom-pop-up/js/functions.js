@@ -18,9 +18,10 @@ jQuery(document).ready(function($) {
             //increasing counter by 1
             increase: function () {
                 this.set('counter', this.get('counter')+1);
-            },
+            }
     });
      var menuView = Backbone.View.extend( {
+         el: ".header",
          model: null,
          className: "popplgn_render",
          template: _.template( $('#popplgn_menu_template').html() ),
@@ -33,32 +34,35 @@ jQuery(document).ready(function($) {
                  this.model.increase();
              }, this), 1000 );
          },
+         render: function() {
+             this.$el.html( this.template( this.model.toJSON() ) );
+             return this;
+         },
          events: {
-            "keydown" : 'keydownHandler',
+            "keypress" : 'keydownHandler',
             "click #popplgn_close" : 'closeIcon',
+            "click #overlay" : 'closeOverlay',
             "change:counter" : 'change'
         },
-        render: function() {
-            this.$el.html( this.template( this.model.toJSON() ) );
-        },
         keydownHandler: function( e ) {
-            if( e.keyCode === 27 ) {
-                this.remove();
-            }
+            if ( e.keyCode == 27 ) this.remove();
         },
         closeIcon: function() {
             this.remove();
         },
+         closeOverlay: function() {
+           this.remove();
+         },
         change: function( model, value, options ) {
             //rendering counter in browsers log
             console.log(model.get('counter'));
             // setting statement for open
             if ( value == new_options.get('delay') ) {
-                // alert( "test" );
+                //alert( "test" );
                 this.render();
             }
             //    setting statement for closing
-            else if ( value == new_options.get('display_time') ) {
+            else if ( value >= new_options.get('display_time') ) {
                 this.remove();
             }
         }
@@ -73,5 +77,5 @@ jQuery(document).ready(function($) {
         overlay: popplgn_passed_data.popplgn_overlay
     });
     var menu_view = new menuView(new_options);
-    $('.header').append(menu_view.$el.html());
+    $(this.el).append(menu_view.$el.html());
 });
