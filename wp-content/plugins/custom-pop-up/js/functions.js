@@ -8,7 +8,8 @@ jQuery(document).ready(function($) {
                 close_button: "1",
                 esc_button: "1",
                 overlay: "0",
-                counter: 0
+                counter: 0,
+                timer: popplgn_passed_data.popplgn_display_time
             },
             validate: function (attrs) {
                 if (attrs.get('delay') <= 0) {
@@ -17,7 +18,10 @@ jQuery(document).ready(function($) {
             },
             //increasing counter by 1
             increase: function () {
-                this.set('counter', this.get('counter')+1);
+                this.set('counter', this.get('counter') + 1);
+            },
+            decrease: function() {
+              this.set('timer', this.get('timer') - 1);
             }
     });
      var menuView = Backbone.View.extend( {
@@ -26,31 +30,33 @@ jQuery(document).ready(function($) {
          className: "popplgn_render",
          template: _.template( $('#popplgn_menu_template').html() ),
          initialize: function(model) {
-            this.model = model;
-            this.listenTo( this.model, 'change:counter', this.change );
+             this.model = model;
+             this.listenTo(this.model, 'change:counter', this.change);
+             this.listenTo(this.model, 'change:counter', this.countdown);
              // binding model to keep calling it the old way. Without it the this.model will
              // call the window model
-             setInterval(_.bind(function(){
+             setInterval(_.bind(function () {
                  this.model.increase();
-             }, this), 1000 );
+             }, this), 1000);
+             setInterval(_.bind(function() {
+                 this.model.decrease();
+             }, this), 1000);
+             $(document).keydown(_.bind(function () {
+                 if (event.keyCode == 27) {
+                     if (this.model.get('esc_button') == 1) {
+                         this.remove();
+                     }
+                 }
+             }, this))
          },
          render: function() {
              this.$el.html( this.template( this.model.toJSON() ) );
              return this;
          },
          events: {
-            "keydown" : 'keydownHandler',
             "click #popplgn_close" : 'closeIcon',
             "click #overlay" : 'closeOverlay',
             "change:counter" : 'change'
-        },
-        keydownHandler: function( e ) {
-            $(document).keydown(function(e){
-                if(e.keyCode == 27) {
-                    event.preventDefault();
-                    this.remove();
-                }
-            });
         },
         closeIcon: function() {
             this.remove();
@@ -65,7 +71,6 @@ jQuery(document).ready(function($) {
             console.log(model.get('counter'));
             // setting statement for open
             if ( value == new_options.get('delay') ) {
-                //alert( "test" );
                 this.render();
             }
             //    setting statement for closing
@@ -73,6 +78,11 @@ jQuery(document).ready(function($) {
                 this.remove();
             }
         }
+         //countdown: function( model, value, options ) {
+         //   if ( value < new_options('timer') ) {
+         //
+         //   }
+         //}
     });
     var new_options = new popup({
         title: popplgn_passed_data.popplgn_title,
