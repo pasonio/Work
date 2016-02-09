@@ -39,19 +39,26 @@ jQuery(document).ready(function($) {
              return this;
          },
          events: {
-            "keypress" : 'keydownHandler',
+            "keydown" : 'keydownHandler',
             "click #popplgn_close" : 'closeIcon',
             "click #overlay" : 'closeOverlay',
             "change:counter" : 'change'
         },
         keydownHandler: function( e ) {
-            if ( e.keyCode == 27 ) this.remove();
+            $(document).keydown(function(e){
+                if(e.keyCode == 27) {
+                    event.preventDefault();
+                    this.remove();
+                }
+            });
         },
         closeIcon: function() {
             this.remove();
         },
          closeOverlay: function() {
-           this.remove();
+           if ( new_options.get('overlay') == 1 ){
+                this.remove();
+           } 
          },
         change: function( model, value, options ) {
             //rendering counter in browsers log
