@@ -32,7 +32,7 @@ jQuery(document).ready(function($) {
          initialize: function(model) {
              this.model = model;
              this.listenTo(this.model, 'change:counter', this.change);
-             this.listenTo(this.model, 'change:counter', this.countdown);
+             this.listenTo(this.model, 'change:timer', this.change);
              // binding model to keep calling it the old way. Without it the this.model will
              // call the window model
              setInterval(_.bind(function () {
@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
              $(document).keydown(_.bind(function () {
                  if (event.keyCode == 27) {
                      if (this.model.get('esc_button') == 1) {
-                         this.remove();
+                        this.remove();
                      }
                  }
              }, this))
@@ -56,19 +56,19 @@ jQuery(document).ready(function($) {
          events: {
             "click #popplgn_close" : 'closeIcon',
             "click #overlay" : 'closeOverlay',
-            "change:counter" : 'change'
         },
         closeIcon: function() {
             this.remove();
         },
-         closeOverlay: function() {
+        closeOverlay: function() {
            if ( new_options.get('overlay') == 1 ){
                 this.remove();
            } 
          },
         change: function( model, value, options ) {
             //rendering counter in browsers log
-            console.log(model.get('counter'));
+            // console.log(model.get('counter'));
+            console.log(model.get('timer'));
             // setting statement for open
             if ( value == new_options.get('delay') ) {
                 this.render();
@@ -78,11 +78,6 @@ jQuery(document).ready(function($) {
                 this.remove();
             }
         }
-         //countdown: function( model, value, options ) {
-         //   if ( value < new_options('timer') ) {
-         //
-         //   }
-         //}
     });
     var new_options = new popup({
         title: popplgn_passed_data.popplgn_title,
