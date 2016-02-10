@@ -1,24 +1,21 @@
 jQuery(document).ready(function($) {
     var popup = Backbone.Model.extend({
+        timer:'0',
             defaults: {
                 title: "Default Title",
                 body: "Default body",
                 display_time: "10",
-                delay: "10",
+                delay: "0",
                 close_button: "1",
                 esc_button: "1",
                 overlay: "0",
                 counter: 0,
-                timer: popplgn_passed_data.popplgn_display_time
+                timer: JSON.parse(popplgn_passed_data.popplgn_display_time) + JSON.parse(popplgn_passed_data.popplgn_delay)
             },
-            validate: function (attrs) {
-                if (attrs.get('delay') <= 0) {
-                    alert('The number must be positive.');
+            validate: function (attrs, options) {
+                if (attrs.delay < 0 || attrs.display_time < 0) {
+                    return 'The number must be positive.';
                 }
-            },
-            //increasing counter by 1
-            increase: function () {
-                this.set('counter', this.get('counter') + 1);
             },
             decrease: function() {
               this.set('timer', this.get('timer') - 1);
@@ -31,13 +28,7 @@ jQuery(document).ready(function($) {
          template: _.template( $('#popplgn_menu_template').html() ),
          initialize: function(model) {
              this.model = model;
-             this.listenTo(this.model, 'change:counter', this.change);
-             this.listenTo(this.model, 'change:timer', this.change);
-             // binding model to keep calling it the old way. Without it the this.model will
-             // call the window model
-             setInterval(_.bind(function () {
-                 this.model.increase();
-             }, this), 1000);
+             this.listenTo(this.model, 'change:timer', this.change );
              setInterval(_.bind(function() {
                  this.model.decrease();
              }, this), 1000);
@@ -55,7 +46,7 @@ jQuery(document).ready(function($) {
          },
          events: {
             "click #popplgn_close" : 'closeIcon',
-            "click #overlay" : 'closeOverlay',
+            "click #overlay" : 'closeOverlay'
         },
         closeIcon: function() {
             this.remove();
@@ -67,27 +58,38 @@ jQuery(document).ready(function($) {
          },
         change: function( model, value, options ) {
             //rendering counter in browsers log
-            // console.log(model.get('counter'));
-            console.log(model.get('timer'));
+            //console.log(model.get('timer'));
             // setting statement for open
-            if ( value == new_options.get('delay') ) {
+            this.model.get('timer');
+            if (value <= new_options.get('display_time') && value > 0 ) {
                 this.render();
             }
-            //    setting statement for closing
-            else if ( value >= new_options.get('display_time') ) {
+            //setting statement for closing
+            else if ( value == 0 ) {
                 this.remove();
             }
         }
-    });
+     });
     var new_options = new popup({
         title: popplgn_passed_data.popplgn_title,
         body: popplgn_passed_data.popplgn_body,
-        display_time: popplgn_passed_data.popplgn_display_time,
-        delay: popplgn_passed_data.popplgn_delay,
         close_button: popplgn_passed_data.popplgn_close_btn,
         esc_button: popplgn_passed_data.popplgn_esc_btn,
         overlay: popplgn_passed_data.popplgn_overlay
+    }, {validate: true} );
+
+    new_options.on('invalid', function(model, error) {
+        alert(model.get('title') + " : " + error);
+        console.log(error);
     });
+    new_options.set({
+        display_time: popplgn_passed_data.popplgn_display_time,
+        delay: popplgn_passed_data.popplgn_delay
+    }, {validate: true});
+
+    //if ( !new_options.isValid()) {
+    //    alert( new_options.get('title') + " : " + new_options.validationError);
+    //}
     var menu_view = new menuView(new_options);
     $(this.el).append(menu_view.$el.html());
 });
