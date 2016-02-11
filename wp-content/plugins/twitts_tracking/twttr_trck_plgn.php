@@ -15,7 +15,7 @@ function twttr_trck_plgn_db() {
     $defaults = array(
         'twttr_trck_plgn_subject' => 'Popular',
         'twttr_trck_plgn_latitude' => '40.7127837',
-        'twttr_trck_plgn_longitude' => '-74.00594130000002',
+        'twttr_trck_plgn_longtitude' => '-74.00594130000002',
         'twttr_trck_plgn_radius' => '100'
     );
     update_option( 'twttr_trck_plgn_options', $defaults );
@@ -100,6 +100,7 @@ function twttr_trck_plgn_subject_field() {
     $options = get_option( 'twttr_trck_plgn_options');
     $value = $options['twttr_trck_plgn_subject'];
     echo '<input name="twttr_trck_plgn_options[twttr_trck_plgn_subject]" id="twttr_trck_plgn_subject" type="text" value="' . $value . '"/>';
+    echo '<div id="map"></div>';
 }
 
 function twttr_trck_plgn_latitude_field() {
