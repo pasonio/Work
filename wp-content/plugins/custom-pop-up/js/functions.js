@@ -1,6 +1,5 @@
 jQuery(document).ready(function($) {
     var popup = Backbone.Model.extend({
-        timer:'0',
             defaults: {
                 title: "Default Title",
                 body: "Default body",
@@ -12,6 +11,7 @@ jQuery(document).ready(function($) {
                 counter: 0,
                 timer: JSON.parse(popplgn_passed_data.popplgn_display_time) + JSON.parse(popplgn_passed_data.popplgn_delay)
             },
+            //#5 validate statements
             validate: function (attrs, options) {
                 if (attrs.delay < 0 || attrs.display_time < 0) {
                     return 'The number must be positive.';
@@ -26,9 +26,14 @@ jQuery(document).ready(function($) {
          model: null,
          className: "popplgn_render",
          template: _.template( $('#popplgn_menu_template').html() ),
-         initialize: function(model) {
-             this.model = model;
+         initialize: function(data) {
+             //#2 assigning empty model to populate
+             this.model = new popup();
              this.listenTo(this.model, 'change:timer', this.change );
+             //#4 calling model data for validation
+             this.listenTo(this.model, 'invalid', this.valid );
+             //#3 setting user input to populate model
+             this.model.set( data, {validate: true} );
              setInterval(_.bind(function() {
                  this.model.decrease();
              }, this), 1000);
@@ -57,8 +62,6 @@ jQuery(document).ready(function($) {
            } 
          },
         change: function( model, value, options ) {
-            //rendering counter in browsers log
-            //console.log(model.get('timer'));
             // setting statement for open
             this.model.get('timer');
             if (value <= new_options.get('display_time') && value > 0 ) {
@@ -68,28 +71,23 @@ jQuery(document).ready(function($) {
             else if ( value == 0 ) {
                 this.remove();
             }
-        }
+        },
+         //#6 render validation message
+         valid: function(model, error) {
+             alert(this.model.get('title') + " : " + error);
+             console.log(error);
+             this.remove();
+         }
      });
-    var new_options = new popup({
+    //#1 adding user input data from admin page
+    var menu_view = new menuView({
         title: popplgn_passed_data.popplgn_title,
         body: popplgn_passed_data.popplgn_body,
         close_button: popplgn_passed_data.popplgn_close_btn,
         esc_button: popplgn_passed_data.popplgn_esc_btn,
-        overlay: popplgn_passed_data.popplgn_overlay
-    }, {validate: true} );
-
-    new_options.on('invalid', function(model, error) {
-        alert(model.get('title') + " : " + error);
-        console.log(error);
-    });
-    new_options.set({
         display_time: popplgn_passed_data.popplgn_display_time,
-        delay: popplgn_passed_data.popplgn_delay
-    }, {validate: true});
-
-    //if ( !new_options.isValid()) {
-    //    alert( new_options.get('title') + " : " + new_options.validationError);
-    //}
-    var menu_view = new menuView(new_options);
+        delay: popplgn_passed_data.popplgn_delay,
+        overlay: popplgn_passed_data.popplgn_overlay
+    });
     $(this.el).append(menu_view.$el.html());
 });

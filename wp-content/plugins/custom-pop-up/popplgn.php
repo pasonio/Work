@@ -24,6 +24,12 @@ function popplgn_database() {
     update_option( 'popplgn_options', $defaults );
 }
 register_activation_hook( __FILE__, 'popplgn_database' );
+
+function popplgn_db_delete() {
+    delete_option( 'popplgn_options' );
+}
+register_deactivation_hook( __FILE__, 'popplgn_db_delete' );
+
 function popplgn_fields_register() {
 
     add_settings_section(
@@ -102,7 +108,7 @@ function popplgn_field_sanitize( $input ) {
     $output['popplgn_delay'] = strip_tags( stripslashes( $input['popplgn_delay'] ) );
     $output['popplgn_close_btn'] = isset( $input['popplgn_close_btn'] ) ? 1 : 0;
     $output['popplgn_esc_btn'] = isset( $input['popplgn_esc_btn'] ) ? 1 : 0;
-    $output['popplgn_overlay'] = isset( $input['popplgn_overlay'] ) ? 1 : 0; 
+    $output['popplgn_overlay'] = isset( $input['popplgn_overlay'] ) ? 1 : 0;
 
     return $output;
 }
