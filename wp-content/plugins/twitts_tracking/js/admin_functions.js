@@ -55,7 +55,8 @@ function initMap() {
            fillColor: '#FF0000',
            fillOpacity: 0.5,
            editable: true,
-           clickable: false
+           clickable: false,
+           radius: JSON.parse(twttr_trck_passed_data.twttr_trck_plgn_radius)
        }
     });
     drawingManager.setMap(map);
