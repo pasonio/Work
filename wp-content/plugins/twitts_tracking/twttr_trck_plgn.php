@@ -127,8 +127,12 @@ function twttr_trck_plgn_admin_scripts() {
     wp_enqueue_script( 'twttr_trck_pass', plugins_url( 'twitts_tracking/js/admin_functions.js' ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-slider' ) );
     wp_enqueue_style( 'twttr_trck_plgn_admin_style', plugins_url( 'twitts_tracking/css/admin_style.css' ) );
     wp_enqueue_style( 'twttr_trck_plgn_slider_style', plugins_url( 'twitts_tracking/css/slider.css'));
-//    passing data to js file to save the user input data
+    //    Loading Google maps API with libraries
+    wp_enqueue_script( 'twttr_trck_plgn_google_maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAqT1sWRYIGOXE8i3WELWgaDDTwdSl4Bo&callback=initMap&libraries=drawing', array(), false, true);
+    //    passing data to js file to save the user input data
     $passing_array = array(
+        'twttr_trck_plgn_latitude' => $options['twttr_trck_plgn_latitude'],
+        'twttr_trck_plgn_longtitude' => $options['twttr_trck_plgn_longtitude'],
         'twttr_trck_plgn_radius' => $options['twttr_trck_plgn_radius']
     );
     wp_localize_script( 'twttr_trck_pass', 'twttr_trck_passed_data', $passing_array);
