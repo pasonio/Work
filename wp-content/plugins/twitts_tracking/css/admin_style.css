@@ -11,7 +11,5 @@ html, body {
 #map {
     height: 600px;
     width: 600px;
-    float: right;
     margin-right: 100px;
-    clear: both;
 }

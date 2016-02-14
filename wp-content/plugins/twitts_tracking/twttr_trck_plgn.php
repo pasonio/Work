@@ -63,6 +63,13 @@ function twttr_trck_plgn_register() {
         'twttr_trck_plgn_options',
         'twttr_trck_plgn_settings'
     );
+    add_settings_field(
+        'twttr_trck_maps',
+        'Google Map',
+        'twttr_trck_plgn_maps_field',
+        'twttr_trck_plgn_options',
+        'twttr_trck_plgn_settings'
+    );
 
     register_setting( 'twttr_trck_plgn_options', 'twttr_trck_plgn_options', 'twttr_trck_plgn_sanitize' );
 }
@@ -100,7 +107,6 @@ function twttr_trck_plgn_subject_field() {
     $options = get_option( 'twttr_trck_plgn_options');
     $value = $options['twttr_trck_plgn_subject'];
     echo '<input name="twttr_trck_plgn_options[twttr_trck_plgn_subject]" id="twttr_trck_plgn_subject" type="text" value="' . $value . '"/>';
-    echo '<div id="map"></div>';
 }
 
 function twttr_trck_plgn_latitude_field() {
@@ -120,6 +126,11 @@ function twttr_trck_plgn_radius_field() {
     $value = $options['twttr_trck_plgn_radius'];
         echo '<input name="twttr_trck_plgn_options[twttr_trck_plgn_radius]" id="twttr_trck_plgn_radius" type="text" value="' . $value .  '"/>';
         echo '<div id="slider"></div>';
+}
+function twttr_trck_plgn_maps_field() {
+    $options = get_option( 'twttr_trck_plgn_options' );
+    $value = $options['twttr_trck_plgn_latitude'];
+    echo '<div id="map"></div>';
 }
 
 function twttr_trck_plgn_admin_scripts() {
@@ -144,3 +155,14 @@ function twttr_trck_plgn_scripts_register() {
     wp_enqueue_script( 'twttr_trck_plgn_script', plugins_url( 'twitts_tracking/js/functions.js'));
 }
 add_action( 'wp_enqueue_scripts', 'twttr_trck_plgn_scripts_register');
+
+// Get the data from Twitter API and display in the front-end
+function twttr_trck_plgn_get_twitts() {
+    $options = get_option('twttr_trck_plgn_options');
+//    Get the data from Twitter JSON API
+    $json = wp_remote_get( 'https://api.twitter.com/1.1/search/tweets.json?q=%' . $options["twttr_trck_plgn_subject"] . '&geocode=' . $options["twttr_trck_plgn_latitude"] . ',' . $options["twttr_trck_plgn_longtitude"] . ',' . $options["twttr_trck_plgn_radius"] . 'km&count=20');
+//    decode JSON into array
+    update_option( 'twttr_trck_plgn_twitter_api', $json);
+}
+add_action( 'admin_init', 'twttr_trck_plgn_get_twitts');
+
