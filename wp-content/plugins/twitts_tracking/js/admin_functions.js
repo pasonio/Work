@@ -54,7 +54,7 @@ function initMap() {
         editable: false,
         fillColor: '#FF0000',
         fillOpacity: 0.5,
-        radius: JSON.parse(twttr_trck_passed_data.twttr_trck_plgn_radius),
+        radius: JSON.parse(twttr_trck_passed_data.twttr_trck_plgn_radius)
     });
     //bind polygon with marker coordinates
     polygon.bindTo('center', marker1, 'position');

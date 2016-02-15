@@ -156,13 +156,36 @@ function twttr_trck_plgn_scripts_register() {
 }
 add_action( 'wp_enqueue_scripts', 'twttr_trck_plgn_scripts_register');
 
-// Get the data from Twitter API and display in the front-end
-function twttr_trck_plgn_get_twitts() {
-    $options = get_option('twttr_trck_plgn_options');
-//    Get the data from Twitter JSON API
-    $json = wp_remote_get( 'https://api.twitter.com/1.1/search/tweets.json?q=%' . $options["twttr_trck_plgn_subject"] . '&geocode=' . $options["twttr_trck_plgn_latitude"] . ',' . $options["twttr_trck_plgn_longtitude"] . ',' . $options["twttr_trck_plgn_radius"] . 'km&count=20');
-//    decode JSON into array
-    update_option( 'twttr_trck_plgn_twitter_api', $json);
-}
-add_action( 'admin_init', 'twttr_trck_plgn_get_twitts');
+function twttr_trck_plgn_twitter_api() {
+    require_once('twitteroauth.php');
 
+    $options = get_option('twttr_trck_plgn_options');
+
+    define( 'CONSUMER_KEY', 'w9NBL5BpcQCeLTt299ngol6Nk');
+    define( 'CONSUMER_SECRET', 'OQwW3icYAMuanMTSEyV1vmLCv33iAfLYbsS1NLiK9AC52Kgwm1');
+    define( 'ACCESS_TOKEN', '4913029835-vDpQPOPwQRsV85uvzklZ0cMhaGTDcak6C7Gukqn');
+    define( 'ACCESS_SECRET', 'e7S62uFNLdnVDBxvbed7DZhAeYZPj1OKIRVilHlmTwgVu');
+
+
+    $connection = new TwitterOAuth( 'CONSUMER_KEY', 'CONSUMER_SECRET', 'ACCESS_TOKEN', 'ACCESS_SECRET');
+    $content = $connection->get('account/verify_credentials');
+
+    $search_query = $connection->get("search/tweets", [ 'count' => 20, 'q' => $options['twttr_trck_plgn_subject'], 'geocode' => $options['twttr_trck_plgn_latitude'],$options['twttr_trck_plgn_longtitude'],$options['twttr_trck_plgn_radius'], 'result_type' => 'mixed']);
+
+//    global $cb;
+//    require_once( 'codebird/src/codebird.php' );
+//    \Codebird\Codebird::setConsumerKey( 'CONSUMER_KEY', 'CONSUMER_SECRET' );
+//    $cb = \Codebird\Codebird::getInstance();
+//    $cb->setToken( 'ACCESS_TOKEN', 'ACCESS_SECRET');
+//
+//    $params = array(
+//        'q'=> $options['twttr_trck_plgn_subject'],
+//        'geocode'=> $options['twttr_trck_plgn_latitude'], $options['twttr_trck_plgn_longtitude'], $options['twttr_trck_plgn_radius'],
+//        'count'=> 20
+//    );
+//    $data = $cb->search_tweets( $params);
+////    $data=$cb->search_tweets('q=Twitter', true);
+//
+//    update_option( 'twttr_trck_plgn_twitts', $data );
+}
+//add_action( 'admin_init', 'twttr_trck_plgn_twitter_api' );
