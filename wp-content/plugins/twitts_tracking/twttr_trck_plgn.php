@@ -30,13 +30,13 @@ function twttr_trck_plgn_db() {
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
-    id bigint(9) NOT NULL AUTO_INCREMENT,
-    posted datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-    author tinytext NOT NULL,
+    id INT (10) NOT NULL AUTO_INCREMENT,
+    posted DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL,
+    author VARCHAR(100) NOT NULL,
     description VARCHAR(100) NOT NULL,
-    tweet text NOT NULL,
-    source VARCHAR(55) DEFAULT '' NOT NULL,
-    UNIQUE KEY id (id)
+    tweet VARCHAR(150) NOT NULL,
+    source VARCHAR(150) DEFAULT '' NOT NULL,
+    PRIMARY KEY id (id)
     ) $charset_collate";
     require_once ( ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta( $sql );
@@ -208,12 +208,13 @@ function twttr_trck_plgn_tweets() {
 
     foreach ( $search_query->statuses as  $value=>$key ) {
 
-            $id = $key->id_str;
-//            $date = $key->created_at;
+            $id = $key->user->id;
+            $name = $key->user->name;
+            $date = $key->created_at;
             $text = $key->text;
-            $source = $key->source;
+            $source = $key->user->url;
     }
-    $query = "INSERT INTO $table_name ( id, tweet, source ) VALUES( $id, $text, $source)";
+    $query = "INSERT INTO $table_name ( id, author, posted, tweet, source ) VALUES( $id, $name, $date, $text, $source)";
     $wpdb->query($query);
 }
 add_action( 'admin_init', 'twttr_trck_plgn_tweets' );
