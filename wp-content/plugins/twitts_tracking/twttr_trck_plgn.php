@@ -1,5 +1,7 @@
 <?php
 /*Plugin name: Twitts tracking plugin*/
+global $jal_db_version;
+$jal_db_version = '1.0';
 function twttr_trck_plgn_page() {
     add_menu_page(
         'Twitter tracking plugin',
@@ -12,6 +14,9 @@ function twttr_trck_plgn_page() {
 add_action( 'admin_menu', 'twttr_trck_plgn_page');
 
 function twttr_trck_plgn_db() {
+    global $wpdb;
+    global $jal_db_version;
+    $jal_db_version = '1.0';
     $defaults = array(
         'twttr_trck_plgn_subject' => 'Popular',
         'twttr_trck_plgn_latitude' => '40.7127837',
@@ -19,10 +24,33 @@ function twttr_trck_plgn_db() {
         'twttr_trck_plgn_radius' => '100'
     );
     update_option( 'twttr_trck_plgn_options', $defaults );
+
+//    Creating custom table for tweets
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+    id bigint(9) NOT NULL AUTO_INCREMENT,
+    posted datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+    author tinytext NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    tweet text NOT NULL,
+    source VARCHAR(55) DEFAULT '' NOT NULL,
+    UNIQUE KEY id (id)
+    ) $charset_collate";
+    require_once ( ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta( $sql );
+    add_option( 'jal_db_version', $jal_db_version );
 }
 register_activation_hook( __FILE__, 'twttr_trck_plgn_db' );
 
 function twttr_trck_plgn_remove_db() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
+
+    $query = "DROP TABLE IF EXISTS $table_name";
+    $wpdb->query( $query );
+
     delete_option( 'twttr_trck_plgn_options');
 }
 register_deactivation_hook( __FILE__, 'twttr_trck_plgn_remove_db' );
@@ -156,36 +184,36 @@ function twttr_trck_plgn_scripts_register() {
 }
 add_action( 'wp_enqueue_scripts', 'twttr_trck_plgn_scripts_register');
 
-function twttr_trck_plgn_twitter_api() {
+function twttr_trck_plgn_tweets() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
     require_once('twitteroauth.php');
 
     $options = get_option('twttr_trck_plgn_options');
+    $subj = $options['twttr_trck_plgn_subject'];
+    $lat = $options['twttr_trck_plgn_latitude'];
+    $lng = $options['twttr_trck_plgn_longtitude'];
+    $rad = $options['twttr_trck_plgn_radius'];
 
-    define( 'CONSUMER_KEY', 'w9NBL5BpcQCeLTt299ngol6Nk');
-    define( 'CONSUMER_SECRET', 'OQwW3icYAMuanMTSEyV1vmLCv33iAfLYbsS1NLiK9AC52Kgwm1');
-    define( 'ACCESS_TOKEN', '4913029835-vDpQPOPwQRsV85uvzklZ0cMhaGTDcak6C7Gukqn');
-    define( 'ACCESS_SECRET', 'e7S62uFNLdnVDBxvbed7DZhAeYZPj1OKIRVilHlmTwgVu');
+    define('CONSUMER_KEY', 'w9NBL5BpcQCeLTt299ngol6Nk');
+    define('CONSUMER_SECRET', 'OQwW3icYAMuanMTSEyV1vmLCv33iAfLYbsS1NLiK9AC52Kgwm1');
+    define('ACCESS_TOKEN', '4913029835-vDpQPOPwQRsV85uvzklZ0cMhaGTDcak6C7Gukqn');
+    define('ACCESS_SECRET', 'e7S62uFNLdnVDBxvbed7DZhAeYZPj1OKIRVilHlmTwgVu');
 
 
-    $connection = new TwitterOAuth( 'CONSUMER_KEY', 'CONSUMER_SECRET', 'ACCESS_TOKEN', 'ACCESS_SECRET');
+    $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET);
     $content = $connection->get('account/verify_credentials');
 
-    $search_query = $connection->get("search/tweets", [ 'count' => 20, 'q' => $options['twttr_trck_plgn_subject'], 'geocode' => $options['twttr_trck_plgn_latitude'],$options['twttr_trck_plgn_longtitude'],$options['twttr_trck_plgn_radius'], 'result_type' => 'mixed']);
+    $search_query = $connection->get("search/tweets", ['count' => 20, 'q' => "$subj", 'geocode' => $lat . ',' . $lng . ',' . $rad . 'km', 'result_type' => 'mixed']);
 
-//    global $cb;
-//    require_once( 'codebird/src/codebird.php' );
-//    \Codebird\Codebird::setConsumerKey( 'CONSUMER_KEY', 'CONSUMER_SECRET' );
-//    $cb = \Codebird\Codebird::getInstance();
-//    $cb->setToken( 'ACCESS_TOKEN', 'ACCESS_SECRET');
-//
-//    $params = array(
-//        'q'=> $options['twttr_trck_plgn_subject'],
-//        'geocode'=> $options['twttr_trck_plgn_latitude'], $options['twttr_trck_plgn_longtitude'], $options['twttr_trck_plgn_radius'],
-//        'count'=> 20
-//    );
-//    $data = $cb->search_tweets( $params);
-////    $data=$cb->search_tweets('q=Twitter', true);
-//
-//    update_option( 'twttr_trck_plgn_twitts', $data );
+    foreach ( $search_query->statuses as  $value=>$key ) {
+
+            $id = $key->id_str;
+//            $date = $key->created_at;
+            $text = $key->text;
+            $source = $key->source;
+    }
+    $query = "INSERT INTO $table_name ( id, tweet, source ) VALUES( $id, $text, $source)";
+    $wpdb->query($query);
 }
-//add_action( 'admin_init', 'twttr_trck_plgn_twitter_api' );
+add_action( 'admin_init', 'twttr_trck_plgn_tweets' );
