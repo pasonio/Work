@@ -260,8 +260,7 @@ function twttr_trck_plgn_db_update() {
 
         $text = addslashes($text);
 
-        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )
-        ON DUPLICATE KEY UPDATE tweet_id="VALUES(' . $id . ')", posted="VALUES(' . $date . ')", author="VALUES(' . $name . ')", tweet="VALUES(' . $text . ')", source="VALUES(' . $source . ')"';
+        $query = 'UPDATE $table_name SET tweet_id="' . $id . '", posted="' . $date . '", author="' . $name . '", tweet="' . $text . '", source="' . $source . '" WHERE id="3"';
         $wpdb->query($query);
     }
 }
