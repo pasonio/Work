@@ -3,20 +3,22 @@
 global $jal_db_version;
 $jal_db_version = '1.0';
 function twttr_trck_plgn_page() {
-    add_menu_page(
+    $hook = add_menu_page(
         'Twitter tracking plugin',
         'PLugin\'s options',
         'manage_options',
         'twttr_trck_plgn_page',
         'twttr_trck_plgn_content'
         );
+    add_action( 'load-' . $hook, 'twttr_trck_plgn_google_maps');
 }
 add_action( 'admin_menu', 'twttr_trck_plgn_page');
 
 function twttr_trck_plgn_db() {
     global $wpdb;
     global $jal_db_version;
-    $jal_db_version = '1.0';
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
+    $charset_collate = $wpdb->get_charset_collate();
     $defaults = array(
         'twttr_trck_plgn_subject' => 'Popular',
         'twttr_trck_plgn_latitude' => '40.7127837',
@@ -26,21 +28,21 @@ function twttr_trck_plgn_db() {
     update_option( 'twttr_trck_plgn_options', $defaults );
 
 //    Creating custom table for tweets
-    $table_name = $wpdb->prefix . "twttr_trck_plgn";
-    $charset_collate = $wpdb->get_charset_collate();
-
     $sql = "CREATE TABLE $table_name (
-    id INT (10) NOT NULL AUTO_INCREMENT,
-    posted DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL,
-    author VARCHAR(100) NOT NULL,
-    description VARCHAR(100) NOT NULL,
-    tweet VARCHAR(150) NOT NULL,
-    source VARCHAR(150) DEFAULT '' NOT NULL,
-    PRIMARY KEY id (id)
-    ) $charset_collate";
+    id mediumint(10) NOT NULL AUTO_INCREMENT,
+    tweet_id bigint(20) unsigned NOT NULL,
+    posted VARCHAR (100)NOT NULL,
+    author VARCHAR(100) DEFAULT NULL,
+    tweet VARCHAR (255) NOT NULL,
+    source VARCHAR(200) DEFAULT NULL,
+    UNIQUE KEY id (id)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
     require_once ( ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta( $sql );
     add_option( 'jal_db_version', $jal_db_version );
+
+//    creating db update event
+    wp_schedule_event( current_time( 'timestamp' ), 'hourly', 'twttr_trck_plgn_update_event');
 }
 register_activation_hook( __FILE__, 'twttr_trck_plgn_db' );
 
@@ -52,6 +54,8 @@ function twttr_trck_plgn_remove_db() {
     $wpdb->query( $query );
 
     delete_option( 'twttr_trck_plgn_options');
+
+    wp_clear_scheduled_hook( 'twttr_trck_plgn_update_event' );
 }
 register_deactivation_hook( __FILE__, 'twttr_trck_plgn_remove_db' );
 
@@ -166,8 +170,6 @@ function twttr_trck_plgn_admin_scripts() {
     wp_enqueue_script( 'twttr_trck_pass', plugins_url( 'twitts_tracking/js/admin_functions.js' ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-slider' ) );
     wp_enqueue_style( 'twttr_trck_plgn_admin_style', plugins_url( 'twitts_tracking/css/admin_style.css' ) );
     wp_enqueue_style( 'twttr_trck_plgn_slider_style', plugins_url( 'twitts_tracking/css/slider.css'));
-    //    Loading Google maps API with libraries
-    wp_enqueue_script( 'twttr_trck_plgn_google_maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAqT1sWRYIGOXE8i3WELWgaDDTwdSl4Bo&callback=initMap&libraries=drawing', array(), false, true);
     //    passing data to js file to save the user input data
     $passing_array = array(
         'twttr_trck_plgn_latitude' => $options['twttr_trck_plgn_latitude'],
@@ -178,6 +180,10 @@ function twttr_trck_plgn_admin_scripts() {
 }
 add_action( 'admin_enqueue_scripts', 'twttr_trck_plgn_admin_scripts' );
 
+function twttr_trck_plgn_google_maps() {
+    //    Loading Google maps API with libraries
+    wp_enqueue_script( 'twttr_trck_plgn_google_maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAqT1sWRYIGOXE8i3WELWgaDDTwdSl4Bo&callback=initMap&libraries=drawing', array(), false, true);
+}
 function twttr_trck_plgn_scripts_register() {
     wp_enqueue_style( 'twttr_trck_plgn_style', plugins_url( 'twitts_tracking/css/style.css' ) );
     wp_enqueue_script( 'twttr_trck_plgn_script', plugins_url( 'twitts_tracking/js/functions.js'));
@@ -209,12 +215,54 @@ function twttr_trck_plgn_tweets() {
     foreach ( $search_query->statuses as  $value=>$key ) {
 
             $id = $key->user->id;
-            $name = $key->user->name;
             $date = $key->created_at;
+            $name = $key->user->name;
             $text = $key->text;
             $source = $key->user->url;
+
+            $text = addslashes( $text );
+
+            $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )';
+            $wpdb->query($query);
     }
-    $query = "INSERT INTO $table_name ( id, author, posted, tweet, source ) VALUES( $id, $name, $date, $text, $source)";
-    $wpdb->query($query);
 }
-add_action( 'admin_init', 'twttr_trck_plgn_tweets' );
+register_activation_hook( __FILE__, 'twttr_trck_plgn_tweets' );
+
+function twttr_trck_plgn_db_update() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
+    require_once('twitteroauth.php');
+
+    $options = get_option('twttr_trck_plgn_options');
+    $subj = $options['twttr_trck_plgn_subject'];
+    $lat = $options['twttr_trck_plgn_latitude'];
+    $lng = $options['twttr_trck_plgn_longtitude'];
+    $rad = $options['twttr_trck_plgn_radius'];
+
+    define('CONSUMER_KEY', 'w9NBL5BpcQCeLTt299ngol6Nk');
+    define('CONSUMER_SECRET', 'OQwW3icYAMuanMTSEyV1vmLCv33iAfLYbsS1NLiK9AC52Kgwm1');
+    define('ACCESS_TOKEN', '4913029835-vDpQPOPwQRsV85uvzklZ0cMhaGTDcak6C7Gukqn');
+    define('ACCESS_SECRET', 'e7S62uFNLdnVDBxvbed7DZhAeYZPj1OKIRVilHlmTwgVu');
+
+
+    $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET);
+    $content = $connection->get('account/verify_credentials');
+
+    $search_query = $connection->get("search/tweets", ['count' => 20, 'q' => "$subj", 'geocode' => $lat . ',' . $lng . ',' . $rad . 'km', 'result_type' => 'mixed']);
+
+    foreach ( $search_query->statuses as  $value=>$key ) {
+
+        $id = $key->user->id;
+        $date = $key->created_at;
+        $name = $key->user->name;
+        $text = $key->text;
+        $source = $key->user->url;
+
+        $text = addslashes($text);
+
+        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )
+        ON DUPLICATE KEY UPDATE tweet_id="VALUES(' . $id . ')", posted="VALUES(' . $date . ')", author="VALUES(' . $name . ')", tweet="VALUES(' . $text . ')", source="VALUES(' . $source . ')"';
+        $wpdb->query($query);
+    }
+}
+add_action( 'twttr_trck_plgn_update_event', 'twttr_trck_plgn_db_update');

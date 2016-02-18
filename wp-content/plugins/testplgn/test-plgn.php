@@ -17,7 +17,7 @@ function table_add() {
     text text NOT NULL,
     url varchar(55) DEFAULT '' NOT NULL,
     UNIQUE KEY id (id)
-    ) $charset_collate;";
+    ) $charset_collate";
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
