@@ -190,12 +190,14 @@ function twttr_trck_plgn_scripts_register() {
 }
 add_action( 'wp_enqueue_scripts', 'twttr_trck_plgn_scripts_register');
 
-function twttr_trck_plgn_tweets() {
+//function for listening geolocation changes on plugin's settings page
+function twttr_trck_plgn_tweets($old_options,$new_options) {
     global $wpdb;
     $table_name = $wpdb->prefix . "twttr_trck_plgn";
     require_once('twitteroauth.php');
 
     $options = get_option('twttr_trck_plgn_options');
+    $options=$new_options;
     $subj = $options['twttr_trck_plgn_subject'];
     $lat = $options['twttr_trck_plgn_latitude'];
     $lng = $options['twttr_trck_plgn_longtitude'];
@@ -221,12 +223,12 @@ function twttr_trck_plgn_tweets() {
             $source = $key->user->url;
 
             $text = addslashes( $text );
-
+//        remove $query from the loop and put all data in array and then put it(array) in query
             $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )';
             $wpdb->query($query);
     }
 }
-register_activation_hook( __FILE__, 'twttr_trck_plgn_tweets' );
+add_action( 'update_option_twttr_trck_plgn_options', 'twttr_trck_plgn_tweets',10,2);
 
 function twttr_trck_plgn_db_update() {
     global $wpdb;
@@ -259,9 +261,17 @@ function twttr_trck_plgn_db_update() {
         $source = $key->user->url;
 
         $text = addslashes($text);
-
-        $query = 'UPDATE $table_name SET tweet_id="' . $id . '", posted="' . $date . '", author="' . $name . '", tweet="' . $text . '", source="' . $source . '" WHERE id="3"';
+//        remove $query from the loop and put all data in array and then put it(array) in query
+        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )';
         $wpdb->query($query);
     }
 }
 add_action( 'twttr_trck_plgn_update_event', 'twttr_trck_plgn_db_update');
+
+function twttr_plgn_trck_shortcode() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . "twttr_trck_plgn";
+    $query = "SELECT tweet_id, posted, author, tweet, source FROM $table_name ORDER BY id DESC LIMIT 20";
+    $wpdb->get_results( $query, ARRAY_A );
+}
+add_shortcode( 'twitter_shortcode', 'twttr_plgn_trck_shortcode');
