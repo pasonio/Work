@@ -33,6 +33,8 @@ function twttr_trck_plgn_db() {
     tweet_id bigint(20) unsigned NOT NULL,
     posted VARCHAR (100)NOT NULL,
     author VARCHAR(100) DEFAULT NULL,
+    screen_name VARCHAR (100) DEFAULT NULL,
+    image_url VARCHAR (100) DEFAULT NULL,
     tweet VARCHAR (255) NOT NULL,
     source VARCHAR(200) DEFAULT NULL,
     UNIQUE KEY id (id)
@@ -219,12 +221,14 @@ function twttr_trck_plgn_tweets($old_options,$new_options) {
             $id = $key->user->id;
             $date = $key->created_at;
             $name = $key->user->name;
+            $screen_name = $key->user->screen_name;
+            $profile_image = $key->user->profile_image_url;
             $text = $key->text;
             $source = $key->user->url;
 
             $text = addslashes( $text );
 //        remove $query from the loop and put all data in array and then put it(array) in query
-            $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )';
+            $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
             $wpdb->query($query);
     }
 }
@@ -257,12 +261,14 @@ function twttr_trck_plgn_db_update() {
         $id = $key->user->id;
         $date = $key->created_at;
         $name = $key->user->name;
+        $screen_name = $key->user->screen_name;
+        $profile_image = $key->user->profile_image_url;
         $text = $key->text;
         $source = $key->user->url;
 
         $text = addslashes($text);
 //        remove $query from the loop and put all data in array and then put it(array) in query
-        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $text . '", "' . $source . '" )';
+        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
         $wpdb->query($query);
     }
 }
@@ -271,7 +277,112 @@ add_action( 'twttr_trck_plgn_update_event', 'twttr_trck_plgn_db_update');
 function twttr_plgn_trck_shortcode() {
     global $wpdb;
     $table_name = $wpdb->prefix . "twttr_trck_plgn";
-    $query = "SELECT tweet_id, posted, author, tweet, source FROM $table_name ORDER BY id DESC LIMIT 20";
-    $wpdb->get_results( $query, ARRAY_A );
+    ob_start(); ?>
+    <div class='container'>
+    <?php foreach( $wpdb->get_results("SELECT tweet_id, posted, author, screen_name, image_url, tweet, source FROM $table_name ORDER BY id DESC LIMIT 20") as $key=>$row) {
+        $id = $row->tweet_id;
+        $date = $row->posted;
+        $name = $row->author;
+        $screen_name = $row->screen_name;
+        $avatar = $row->image_url;
+        $tweet = $row->tweet; ?>
+        <div class='col-sm-6' id='twttr_trck_plgn_nickname'>
+            <span class="name"><strong><?php echo $name; ?></strong><small id="twttr_trck_plgn_screen_name"><?php echo $screen_name; ?></small></span>
+        </div>
+        <div class="col-sm-6" id="twttr_trck_plgn_date">
+            <span class="date"><?php echo $date; ?></span>
+        </div>
+        <div class="col-sm-12" id="twttr_trck_plgn_body">
+            <span class="tweet"><?php echo $tweet; ?></span>
+        </div>
+    <?php } ?>
+    </div>
+    <?php return ob_get_clean();
 }
 add_shortcode( 'twitter_shortcode', 'twttr_plgn_trck_shortcode');
+
+// Add list table in the admin page
+if ( ! class_exists( 'Wp_List_Table') ) {
+    require_once ( ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
+}
+class Twitter_List_Table extends WP_List_Table{
+
+    function get_columns() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "twttr_trck_plgn";
+
+        $query = 'SELECT tweet_id, posted, author, screen_name, image_url, tweet, source FROM ' . $table_name . ' ORDER BY id DESC';
+//      Getting data from database and fetching to function
+        $this->items = $wpdb->get_results( $query);
+
+        $columns = array(
+            'id' => 'Tweet id',
+            'author' => 'Author',
+            'date' => 'Created at',
+            'tweet' => 'Tweet',
+            'screen_name' => 'Screen name'
+        );
+        return $columns;
+    }
+
+    function prepare_items() {
+        $columns = $this->get_columns();
+        $hidden = array();
+        $sortable = $this->get_sortable_columns();
+        $this->_column_headers = array( $columns, $hidden, $sortable);
+    }
+
+    function get_sortable_columns() {
+        $sortable_columns = array(
+
+        );
+        return $sortable_columns;
+    }
+
+    function display_rows() {
+        $records = $this->items;
+
+//        Register get_columns and sortable_columns method
+        list( $columns, $hidden) = $this->get_column_info();
+
+        if ( ! empty($records) ) {
+            foreach( $records as $rec ){
+                echo '<tr id="record' . $rec->tweet_id . '">';
+                foreach ( $columns as $column_name => $column_display_name ) {
+                    switch( $column_name) {
+                        case "id": echo '<td>' . $rec->tweet_id . '</td>'; break;
+                        case "author": echo '<td>' . $rec->author . '</td>'; break;
+                        case "date": echo '<td>' . $rec->posted . '</td>'; break;
+                        case "tweet": echo '<td>' . $rec->tweet . '</td>'; break;
+                        case "screen_name": echo '<td>' . $rec->screen_name . '</td>'; break;
+                    }
+                }
+                echo '</tr>';
+            }
+        }
+    }
+//    function column_default($item, $column_name) {
+//        switch ( $column_name ) {
+//            case 'author':
+//            case 'date':
+//            case 'tweet':
+//            case 'screen_name':
+//                return $item[$column_name];
+//            default:
+//                return print_r($item, true); // show the whole arrayfor troubleshooting purposes
+//        }
+//    }
+}
+
+function twttr_trck_plgn_list_table() {
+    add_menu_page( 'List of tweets', 'Tweets', 'manage_options', 'tweet_list', 'twttr_trck_plgn_list_page');
+}
+add_action( 'admin_menu', 'twttr_trck_plgn_list_table' );
+
+function twttr_trck_plgn_list_page() {
+    $twttr_trck_plgn_list_data = new Twitter_List_Table();
+    echo '<div class="twttr_trck_plgn_table_wrap"><h2>Twiiter list table</h2>';
+    $twttr_trck_plgn_list_data->prepare_items();
+    $twttr_trck_plgn_list_data->display();
+    echo '</div>';
+}

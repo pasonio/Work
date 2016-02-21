@@ -1,1 +1,20 @@
- 
+.container {
+    border:1px solid black;
+}
+#twttr_trck_plgn_nickname {
+    float: left;
+    padding:10px;
+}
+#twttr_trck_plgn_date {
+    float: right;
+    padding: 10px;;
+}
+#twttr_trck_plgn_body {
+    clear: both;
+    padding:10px;
+    border-top:1px solid black;
+    border-bottom: 1px solid black;
+}
+#twttr_trck_plgn_screen_name {
+    padding-left: 10px;
+}
