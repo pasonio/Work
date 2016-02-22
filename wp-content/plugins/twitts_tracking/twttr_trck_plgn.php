@@ -32,6 +32,7 @@ function twttr_trck_plgn_db() {
     id mediumint(10) NOT NULL AUTO_INCREMENT,
     tweet_id bigint(20) unsigned NOT NULL,
     posted VARCHAR (100)NOT NULL,
+    subject VARCHAR (100) NOT NULL,
     author VARCHAR(100) DEFAULT NULL,
     screen_name VARCHAR (100) DEFAULT NULL,
     image_url VARCHAR (100) DEFAULT NULL,
@@ -220,6 +221,7 @@ function twttr_trck_plgn_tweets($old_options,$new_options) {
 
             $id = $key->user->id;
             $date = $key->created_at;
+            $theme = $subj;
             $name = $key->user->name;
             $screen_name = $key->user->screen_name;
             $profile_image = $key->user->profile_image_url;
@@ -228,7 +230,7 @@ function twttr_trck_plgn_tweets($old_options,$new_options) {
 
             $text = addslashes( $text );
 //        remove $query from the loop and put all data in array and then put it(array) in query
-            $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
+            $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, subject, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $theme . '","' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
             $wpdb->query($query);
     }
 }
@@ -260,6 +262,7 @@ function twttr_trck_plgn_db_update() {
 
         $id = $key->user->id;
         $date = $key->created_at;
+        $theme = $subj;
         $name = $key->user->name;
         $screen_name = $key->user->screen_name;
         $profile_image = $key->user->profile_image_url;
@@ -268,7 +271,7 @@ function twttr_trck_plgn_db_update() {
 
         $text = addslashes($text);
 //        remove $query from the loop and put all data in array and then put it(array) in query
-        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
+        $query = 'INSERT INTO ' . $table_name . '( tweet_id, posted, subject, author, screen_name, image_url, tweet, source  ) VALUES( "' . $id . '", "' . $date . '", "' . $theme . '", "' . $name . '", "' . $screen_name . '", "' . $profile_image . '", "' . $text . '", "' . $source . '" )';
         $wpdb->query($query);
     }
 }
@@ -279,15 +282,19 @@ function twttr_plgn_trck_shortcode() {
     $table_name = $wpdb->prefix . "twttr_trck_plgn";
     ob_start(); ?>
     <div class='container'>
-    <?php foreach( $wpdb->get_results("SELECT tweet_id, posted, author, screen_name, image_url, tweet, source FROM $table_name ORDER BY id DESC LIMIT 20") as $key=>$row) {
+    <?php foreach( $wpdb->get_results("SELECT tweet_id, posted, subject, author, screen_name, image_url, tweet, source FROM $table_name ORDER BY id DESC LIMIT 20") as $key=>$row) {
         $id = $row->tweet_id;
         $date = $row->posted;
+        $theme = $row->subject;
         $name = $row->author;
         $screen_name = $row->screen_name;
         $avatar = $row->image_url;
         $tweet = $row->tweet; ?>
         <div class='col-sm-6' id='twttr_trck_plgn_nickname'>
             <span class="name"><strong><?php echo $name; ?></strong><small id="twttr_trck_plgn_screen_name"><?php echo $screen_name; ?></small></span>
+        </div>
+        <div class="col-sm-6" id="twttr_trck_plgn_subject">
+            <span class="subject"><?php echo $theme; ?></span>
         </div>
         <div class="col-sm-6" id="twttr_trck_plgn_date">
             <span class="date"><?php echo $date; ?></span>
@@ -308,70 +315,102 @@ if ( ! class_exists( 'Wp_List_Table') ) {
 class Twitter_List_Table extends WP_List_Table{
 
     function get_columns() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . "twttr_trck_plgn";
-
-        $query = 'SELECT tweet_id, posted, author, screen_name, image_url, tweet, source FROM ' . $table_name . ' ORDER BY id DESC';
-//      Getting data from database and fetching to function
-        $this->items = $wpdb->get_results( $query);
 
         $columns = array(
-            'id' => 'Tweet id',
+            'tweet_id' => 'Tweet id',
+            'subject' => 'Subject',
             'author' => 'Author',
-            'date' => 'Created at',
+            'posted' => 'Created at',
             'tweet' => 'Tweet',
             'screen_name' => 'Screen name'
         );
         return $columns;
     }
 
+    function get_items() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "twttr_trck_plgn";
+        $query = "SELECT tweet_id, posted, subject, author, screen_name, image_url, tweet, source FROM $table_name ";
+
+//      Sorting order
+
+        $orderby = ! empty ($_GET['orderby']) ? $_GET['orderby'] : 'DESC';
+        $order = ! empty ( $_GET['order']) ? $_GET['order'] : '';
+        if ( !empty($orderby) & !empty($order) ) {
+            $query .= 'ORDER BY ' . $orderby . ' ' . $order;
+        }
+
+//        Pagination
+//        Number of elements in your table
+        $totalitems = $wpdb->query($query); // return total number of affected rows
+//        How many to display per page
+        $perpage = 5;
+//        Which page is this
+        $paged = !empty($_GET['paged']) ? $_GET['paged'] : '';
+//        page number
+        if(empty($paged) || !is_numeric($paged) || $paged<0 ) {
+            $paged = 1;
+        }
+
+//        How many pages do we have in total
+        $totalpages = ceil($totalitems/$perpage);
+//        adjust the query to take pagination into account
+        if(!empty($paged) && !empty($perpage)) {
+            $offset = ($paged-1)*$perpage;
+            $query.=' LIMIT ' .(int)$offset.', '.(int)$perpage;
+        }
+
+//        Register the pagination
+        $this->set_pagination_args( array(
+            'total_items' => $totalitems,
+            'total_pages' => $totalpages,
+            'per_page' => $perpage,
+        ) );
+
+//        The pagination links are automatically built according to those parameters
+//        Fetch the items
+        $this->items = $wpdb->get_results($query); ?>
+
+        <!--Search box-->
+        <form method="post">
+            <input type="hidden" name="twttr_trck_plgn_search" value="twttr_search_field"/>
+            <?php $this->search_box( 'search', 'search_id'); ?>
+        </form>
+    <?php }
     function prepare_items() {
+        global $wpdb;
         $columns = $this->get_columns();
         $hidden = array();
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = array( $columns, $hidden, $sortable);
+        $this->items = $this->get_items();
     }
 
     function get_sortable_columns() {
         $sortable_columns = array(
-
+            'posted' => array( 'posted', false),
+            'subject' => array( 'subject', true)
         );
         return $sortable_columns;
     }
 
-    function display_rows() {
-        $records = $this->items;
+    function get_bulk_actions() {
+        $actions = [
+            'bulk_delete' => 'Delete'
+        ];
+            return $actions;
+    }
 
-//        Register get_columns and sortable_columns method
-        list( $columns, $hidden) = $this->get_column_info();
-
-        if ( ! empty($records) ) {
-            foreach( $records as $rec ){
-                echo '<tr id="record' . $rec->tweet_id . '">';
-                foreach ( $columns as $column_name => $column_display_name ) {
-                    switch( $column_name) {
-                        case "id": echo '<td>' . $rec->tweet_id . '</td>'; break;
-                        case "author": echo '<td>' . $rec->author . '</td>'; break;
-                        case "date": echo '<td>' . $rec->posted . '</td>'; break;
-                        case "tweet": echo '<td>' . $rec->tweet . '</td>'; break;
-                        case "screen_name": echo '<td>' . $rec->screen_name . '</td>'; break;
-                    }
-                }
-                echo '</tr>';
-            }
+    function column_default($item, $column_name) {
+        switch ($column_name) {
+            case 'id' : return $item->tweet_id; break;
+            case 'subject' : return $item->subject; break;
+            case 'author' : return $item->author; break;
+            case 'posted' : return $item->posted; break;
+            case 'tweet' : return $item->tweet; break;
+            case 'screen_name' : return $item->screen_name; break;
         }
     }
-//    function column_default($item, $column_name) {
-//        switch ( $column_name ) {
-//            case 'author':
-//            case 'date':
-//            case 'tweet':
-//            case 'screen_name':
-//                return $item[$column_name];
-//            default:
-//                return print_r($item, true); // show the whole arrayfor troubleshooting purposes
-//        }
-//    }
 }
 
 function twttr_trck_plgn_list_table() {
@@ -381,7 +420,7 @@ add_action( 'admin_menu', 'twttr_trck_plgn_list_table' );
 
 function twttr_trck_plgn_list_page() {
     $twttr_trck_plgn_list_data = new Twitter_List_Table();
-    echo '<div class="twttr_trck_plgn_table_wrap"><h2>Twiiter list table</h2>';
+    echo '<div class="twttr_trck_plgn_table_wrap"><h2>Twitter list table</h2>';
     $twttr_trck_plgn_list_data->prepare_items();
     $twttr_trck_plgn_list_data->display();
     echo '</div>';
