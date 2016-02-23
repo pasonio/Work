@@ -13,3 +13,6 @@ html, body {
     width: 600px;
     margin-right: 100px;
 }
+#twttr_trck_plgn_edit_btn {
+    cursor: pointer;
+}

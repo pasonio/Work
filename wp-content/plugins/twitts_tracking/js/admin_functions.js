@@ -19,9 +19,14 @@ jQuery(document).ready(function($) {
     $("#twttr_trck_plgn_radius").change(function(){
         polygon.setRadius( Number($("#twttr_trck_plgn_radius").val()));
     });
-    $("#twttr_trck_plgn_edit_btn").click(function(){
-        $(".tweet_id").html('save');
-        $("#twttr_trck_plgn_edit_btn").html('save');
+    //Edit button options
+    $("#twttr_trck_plgn_edit_btn").on('click',function() {
+        $(".tweet_id").prepend('<input type="text" id="twttr_trck_plgn_edit_id" value="" />');
+        $(".subject").prepend('<input type="text" id="twttr_trck_plgn_edit_subject" value="" />');
+        $(".author").prepend('<input type="text" id="twttr_trck_plgn_edit_author" value="" />');
+        $(".tweet").prepend('<input type="text" id="twttr_trck_plgn_edit_tweet" value="" />');
+        $(".screen_name").prepend('<input type="text" id="twttr_trck_plgn_edit_screen_name" value="" />');
+        $("#twttr_trck_plgn_edit_btn").html('Save');
     });
 });
 //    Display google maps in admin page

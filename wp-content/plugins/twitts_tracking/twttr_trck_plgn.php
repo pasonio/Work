@@ -399,7 +399,7 @@
 
         function column_tweet_id($item) {
             $actions = array(
-                'edit' => sprintf('<a href="?page=%s&action=%s&row=%s" id="twttr_trck_plgn_edit_btn">Edit</a>', $_REQUEST['page'], 'edit', $item->tweet_id),
+                'edit' => sprintf('<a id="twttr_trck_plgn_edit_btn">Edit</a>', $_REQUEST['page'], 'edit', $item->tweet_id),
                 'delete' => sprintf('<a href="?page=%s&action=%s&row=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->tweet_id ),
             );
             return sprintf('%1$s %2$s', $item->tweet_id, $this->row_actions($actions) );
