@@ -330,13 +330,13 @@ class Twitter_List_Table extends WP_List_Table{
     function get_items() {
         global $wpdb;
         $table_name = $wpdb->prefix . "twttr_trck_plgn";
-        $query = "SELECT tweet_id, posted, subject, author, screen_name, image_url, tweet, source FROM $table_name ";
+        $query = "SELECT tweet_id, posted, subject, author, screen_name, tweet, source FROM $table_name ";
 
 //      Sorting order
 
         $orderby = ! empty ($_GET['orderby']) ? $_GET['orderby'] : 'DESC';
         $order = ! empty ( $_GET['order']) ? $_GET['order'] : '';
-        if ( !empty($orderby) & !empty($order) ) {
+        if ( !empty($orderby) && !empty($order) ) {
             $query .= 'ORDER BY ' . $orderby . ' ' . $order;
         }
 
@@ -344,11 +344,11 @@ class Twitter_List_Table extends WP_List_Table{
 //        Number of elements in your table
         $totalitems = $wpdb->query($query); // return total number of affected rows
 //        How many to display per page
-        $perpage = 5;
+        $perpage = 10;
 //        Which page is this
         $paged = !empty($_GET['paged']) ? $_GET['paged'] : '';
 //        page number
-        if(empty($paged) || !is_numeric($paged) || $paged<0 ) {
+        if(empty($paged) || !is_numeric($paged) || $paged < 0 ) {
             $paged = 1;
         }
 
@@ -365,30 +365,27 @@ class Twitter_List_Table extends WP_List_Table{
             'total_items' => $totalitems,
             'total_pages' => $totalpages,
             'per_page' => $perpage,
-        ) );
-
-//        The pagination links are automatically built according to those parameters
-//        Fetch the items
-        $this->items = $wpdb->get_results($query); ?>
-
+        ) ); ?>
         <!--Search box-->
         <form method="post">
             <input type="hidden" name="twttr_trck_plgn_search" value="twttr_search_field"/>
             <?php $this->search_box( 'search', 'search_id'); ?>
         </form>
-    <?php }
+
+        <?php $this->items = $wpdb->get_results($query);//Fetch the items
+
+    }
     function prepare_items() {
-        global $wpdb;
         $columns = $this->get_columns();
         $hidden = array();
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = array( $columns, $hidden, $sortable);
-        $this->items = $this->get_items();
+        $this->get_items();
     }
 
     function get_sortable_columns() {
         $sortable_columns = array(
-            'posted' => array( 'posted', false),
+            'posted' => array( 'posted', true),
             'subject' => array( 'subject', true)
         );
         return $sortable_columns;
