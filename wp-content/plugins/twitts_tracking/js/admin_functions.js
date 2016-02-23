@@ -18,7 +18,11 @@ jQuery(document).ready(function($) {
     });
     $("#twttr_trck_plgn_radius").change(function(){
         polygon.setRadius( Number($("#twttr_trck_plgn_radius").val()));
-    })
+    });
+    $("#twttr_trck_plgn_edit_btn").click(function(){
+        $(".tweet_id").html('save');
+        $("#twttr_trck_plgn_edit_btn").html('save');
+    });
 });
 //    Display google maps in admin page
 var map;
