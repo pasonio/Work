@@ -20,13 +20,49 @@ jQuery(document).ready(function($) {
         polygon.setRadius( Number($("#twttr_trck_plgn_radius").val()));
     });
     //Edit button options
-    $("#twttr_trck_plgn_edit_btn").on('click',function() {
-        $(".tweet_id").prepend('<input type="text" id="twttr_trck_plgn_edit_id" value="" />');
-        $(".subject").prepend('<input type="text" id="twttr_trck_plgn_edit_subject" value="" />');
-        $(".author").prepend('<input type="text" id="twttr_trck_plgn_edit_author" value="" />');
-        $(".tweet").prepend('<input type="text" id="twttr_trck_plgn_edit_tweet" value="" />');
-        $(".screen_name").prepend('<input type="text" id="twttr_trck_plgn_edit_screen_name" value="" />');
-        $("#twttr_trck_plgn_edit_btn").html('Save');
+    $("#twttr_trck_plgn_edit_btn").click(function() {
+
+            var tw_id = $("#twttr_trck_plgn_tw_id", this).text();
+            var tw_subj = $(".subject", this).text();
+            var tw_auth = $(".author", this).text();
+            var tw_tweet = $(".tweet", this).text();
+            var tw_screen_name = $(".screen_name", this).text();
+            $(".tweet_id span", this).html('<input type="text" id="twttr_trck_plgn_edit_id" value="'+tw_id+'" />');
+            $(".subject", this).text('<input type="text" id="twttr_trck_plgn_edit_subject" value="'+tw_subj+'" />');
+            $(".author", this).text('<input type="text" id="twttr_trck_plgn_edit_author" value="'+tw_auth+'" />');
+            $(".tweet", this).text('<textarea id="twttr_trck_plgn_edit_tweet">'+tw_tweet+'</textarea>');
+            $(".screen_name", this).text('<input type="text" id="twttr_trck_plgn_edit_screen_name" value="'+tw_screen_name+'" />');
+            $(this).html('<a id="twttr_trck_plgn_save_btn">Save</a>');
+        });
+        //Saving data by clicking on save button
+        $("#twttr_trck_plgn_save_btn").click(function() {
+            $(".tweet_id").val("#twttr_trck_plgn_edit_id");
+            $("#twttr_trck_plgn_edit_id").hide();
+            $("#twttr_trck_plgn_edit_subject").hide();
+            $("#twttr_trck_plgn_edit_author").hide();
+            $("#twttr_trck_plgn_edit_tweet").hide();
+            $("#twttr_trck_plgn_edit_screen_name").hide();
+        });
+        var id = $('#twttr_trck_plgn_edit_id').val();
+        var subj = $('#twttr_trck_plgn_edit_subject').val();
+        var auth = $('#twttr_trck_plgn_edit_author').val();
+        var tweet = $('#twttr_trck_plgn_edit_tweet').val();
+        var screen_name = $('#twttr_trck_plgn_edit_screen_name').val();
+        $.ajax({
+            type: "POST",
+            url: ajaxurl,
+            data: {
+                action: 'load_input_data',
+                tweet_id: id,
+                subject: subj,
+                author: auth,
+                tweet: tweet,
+                screen_name: screen_name
+            },
+            success: function(res) {
+                console.log(res);
+            }
+        })
     });
 });
 //    Display google maps in admin page

@@ -332,6 +332,14 @@
             return $columns;
         }
 //        ACTION "DELETE" SHOULD BE CALLED BEFORE get_items() function ACTION "EDIT" SHOULD ADD INPUT FIELDS BY CLICKING IN EDIT BTN
+        function column_tweet_id($item) {
+            $actions = array(
+                'edit' => sprintf('<a id="twttr_trck_plgn_edit_btn">Edit</a>', $_REQUEST['page'], 'edit', $item->tweet_id),
+                'delete' => sprintf('<a href="?page=%s&action=%s&row=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->tweet_id ),
+            );
+            return sprintf('%1$s %2$s', "<span id='twttr_trck_plgn_tw_id'>".$item->tweet_id."</span>", $this->row_actions($actions) );
+        }
+
         function get_items() {
             global $wpdb;
             $table_name = $wpdb->prefix . "twttr_trck_plgn";
@@ -397,14 +405,6 @@
             );
         }
 
-        function column_tweet_id($item) {
-            $actions = array(
-                'edit' => sprintf('<a id="twttr_trck_plgn_edit_btn">Edit</a>', $_REQUEST['page'], 'edit', $item->tweet_id),
-                'delete' => sprintf('<a href="?page=%s&action=%s&row=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->tweet_id ),
-            );
-            return sprintf('%1$s %2$s', $item->tweet_id, $this->row_actions($actions) );
-        }
-
         function get_sortable_columns() {
             $sortable_columns = array(
                 'posted' => array( 'posted', true),
@@ -466,3 +466,9 @@
         echo '</div>';
         echo '</form>';
     }
+
+    function input_data_process() {
+        var_dump($_POST);
+        die('Dead');
+    }
+add_action( 'wp_ajax_load_input_data', 'input_data_process');
