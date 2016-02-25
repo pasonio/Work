@@ -21,19 +21,20 @@ jQuery(document).ready(function($) {
     });
     //Edit button options
     $("#twttr_trck_plgn_edit_btn").click(function() {
-
-            var tw_id = $("#twttr_trck_plgn_tw_id", this).text();
-            var tw_subj = $(".subject", this).text();
-            var tw_auth = $(".author", this).text();
-            var tw_tweet = $(".tweet", this).text();
-            var tw_screen_name = $(".screen_name", this).text();
-            $(".tweet_id span", this).html('<input type="text" id="twttr_trck_plgn_edit_id" value="'+tw_id+'" />');
-            $(".subject", this).text('<input type="text" id="twttr_trck_plgn_edit_subject" value="'+tw_subj+'" />');
-            $(".author", this).text('<input type="text" id="twttr_trck_plgn_edit_author" value="'+tw_auth+'" />');
-            $(".tweet", this).text('<textarea id="twttr_trck_plgn_edit_tweet">'+tw_tweet+'</textarea>');
-            $(".screen_name", this).text('<input type="text" id="twttr_trck_plgn_edit_screen_name" value="'+tw_screen_name+'" />');
-            $(this).html('<a id="twttr_trck_plgn_save_btn">Save</a>');
+        $("td").parent("tr").on('click', "#twttr_trck_plgn_edit_btn", function (){
+            var tw_id = $("#twttr_trck_plgn_tw_id").text();
+            var tw_subj = $(".subject").text();
+            var tw_auth = $(".author").text();
+            var tw_tweet = $(".tweet").text();
+            var tw_screen_name = $(".screen_name").text();
+            $(".tweet_id #twttr_trck_plgn_tw_id", this).html('<input type="text" id="twttr_trck_plgn_edit_id" value="'+tw_id+'" />');
+            $(".subject").html('<input type="text" id="twttr_trck_plgn_edit_subject" value="'+tw_subj+'" />');
+            $(".author").html('<input type="text" id="twttr_trck_plgn_edit_author" value="'+tw_auth+'" />');
+            $(".tweet").html('<textarea id="twttr_trck_plgn_edit_tweet">'+tw_tweet+'</textarea>');
+            $(".screen_name").html('<input type="text" id="twttr_trck_plgn_edit_screen_name" value="'+tw_screen_name+'" />');
         });
+        $(this).html('<a id="twttr_trck_plgn_save_btn">Save</a>');
+    });
         //Saving data by clicking on save button
         $("#twttr_trck_plgn_save_btn").click(function() {
             $(".tweet_id").val("#twttr_trck_plgn_edit_id");
@@ -63,7 +64,6 @@ jQuery(document).ready(function($) {
                 console.log(res);
             }
         })
-    });
 });
 //    Display google maps in admin page
 var map;
