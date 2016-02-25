@@ -19,3 +19,6 @@ html, body {
 #twttr_trck_plgn_save_btn {
     cursor: pointer;
 }
+#twttr_trck_plgn_delete_btn {
+    cursor: pointer;
+}

@@ -335,7 +335,7 @@
         function column_tweet_id($item) {
             $actions = array(
                 'edit' => sprintf('<a id="twttr_trck_plgn_edit_btn">Edit</a>', $_REQUEST['page'], 'edit', $item->tweet_id),
-                'delete' => sprintf('<a href="?page=%s&action=%s&row=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->tweet_id ),
+                'delete' => sprintf('<a id="twttr_trck_plgn_delete_btn">Delete</a>', $_REQUEST['page'], 'delete', $item->tweet_id ),
             );
             return sprintf('%1$s %2$s', "<span id='twttr_trck_plgn_tw_id'>".$item->tweet_id."</span>", $this->row_actions($actions) );
         }
@@ -345,10 +345,14 @@
             $table_name = $wpdb->prefix . "twttr_trck_plgn";
             $query = "SELECT tweet_id, posted, subject, author, screen_name, tweet, source FROM $table_name ";
 
-    //      Sorting order
+//            Searching settings
             if (isset($_REQUEST['s']) && $_REQUEST['s']!=''){
-                die('search');
+                $search_value = $_REQUEST['s'];
+                $query .= 'WHERE tweet_id LIKE "' . $search_value . '" OR posted LIKE "' . $search_value . '" OR subject LIKE "' . $search_value . '" OR author LIKE "' . $search_value . '" OR screen_name LIKE "' . $search_value . '" OR tweet LIKE "' . $search_value . '" ';
+//                die('search');
             }
+
+            //      Sorting order
             $orderby = ! empty ($_GET['orderby']) ? $_GET['orderby'] : 'DESC';
             $order = ! empty ( $_GET['order']) ? $_GET['order'] : '';
             if ( !empty($orderby) && !empty($order) && $_GET['orderby'] == 'posted' ) {
@@ -468,7 +472,29 @@
     }
 
     function input_data_process() {
-        var_dump($_POST);
+        global $wpdb;
+        $table_name = $wpdb->prefix . "twttr_trck_plgn";
+//        Setting variables for database update
+        $changed_id = $_POST['tweet_id'];
+        $changed_subject = $_POST['subject'];
+        $changed_author = $_POST['author'];
+        $changed_date = $_POST['posted'];
+        $changed_tweet = $_POST['tweet'];
+        $changed_screen_name = $_POST['screen_name'];
+
+        $query = 'UPDATE ' . $table_name . ' SET posted = "' . $changed_date . '", subject = "' . $changed_subject . '", author = "' . $changed_author . '", screen_name = "' . $changed_screen_name . '", tweet = "' . $changed_tweet . '" WHERE tweet_id = "'. $changed_id . '"';
+        $wpdb->query($query);
         die('Dead');
     }
-add_action( 'wp_ajax_load_input_data', 'input_data_process');
+    add_action( 'wp_ajax_load_input_data', 'input_data_process');
+
+    function delete_table_row() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "twttr_trck_plgn";
+
+        $row_to_delete = $_POST['tweet_id'];
+
+        $query = 'DELETE FROM ' . $table_name . ' WHERE tweet_id = "' . $row_to_delete . '"';
+        $wpdb->query($query);
+    }
+    add_action( 'wp_ajax_delete_table_row', 'delete_table_row');
