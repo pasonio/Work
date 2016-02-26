@@ -395,11 +395,26 @@
             $this->items = $wpdb->get_results($query);//Fetch the items
         }
 
+        function process_bulk_action() {
+//            $bulk_id = ( is_array( $_REQUEST['bulk'] ) ) ? $_REQUEST['bulk'] : array( $_REQUEST['bulk'] );
+//
+//            if ( 'delete' === $this->current_action() ) {
+//                global $wpdb;
+//                $table_name = $wpdb->prefix . "twttr_trck_plgn";
+//
+//                foreach ( $bulk_id as $id ) {
+//                    $id = absint( $id );
+//                    $wpdb->query( "DELETE FROM $table_name WHERE tweet_id = $id" );
+//                }
+//            }
+        }
+
         function prepare_items() {
             $columns = $this->get_columns();
             $hidden = array();
             $sortable = $this->get_sortable_columns();
             $this->_column_headers = array( $columns, $hidden, $sortable);
+            $this->process_bulk_action();
             $this->get_items();
         }
 
