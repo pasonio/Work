@@ -1,0 +1,214 @@
+/*
+Name: Rental Application
+
+Lato-Black*/
+@font-face {
+    font-family: 'Lato-Black';
+    src: url('fonts/lato-black/Lato-Black.eot?#iefix') format('embedded-opentype'),
+    url('fonts/lato-black/Lato-Black.woff') format('woff'),
+    url('fonts/lato-black/Lato-Black.ttf')  format('truetype'),
+    url('fonts/lato-black/Lato-Black.svg#Lato-Black') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/*Lato-Bold*/
+@font-face {
+    font-family: 'Lato-Bold';
+    src: url('fonts/lato-bold/Lato-Bold.eot?#iefix') format('embedded-opentype'),
+    url('fonts/lato-bold/Lato-Bold.woff') format('woff'),
+    url('fonts/lato-bold/Lato-Bold.ttf')  format('truetype'),
+    url('fonts/lato-bold/Lato-Bold.svg#Lato-Bold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/*Lato-Regular*/
+
+@font-face {
+    font-family: 'Lato-Regular';
+    src: url('fonts/lato-regular/Lato-Regular.eot?#iefix') format('embedded-opentype'),
+    url('fonts/lato-regular/Lato-Regular.woff') format('woff'),
+    url('fonts/lato-regular/Lato-Regular.ttf')  format('truetype'),
+    url('fonts/lato-regular/Lato-Regular.svg#Lato-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/*Lato-Italic*/
+
+@font-face {
+    font-family: 'Lato-Italic';
+    src: url('fonts/lato-italic/Lato-Italic.eot?#iefix') format('embedded-opentype'),
+    url('fonts/lato-italic/Lato-Italic.woff') format('woff'),
+    url('fonts/lato-italic/Lato-Italic.ttf')  format('truetype'),
+    url('fonts/lato-italic/Lato-Italic.svg#Lato-Italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    background-color: #f7f7f7;
+}
+input,
+button {
+    font-family: 'Lato-Italic' !important;
+}
+#header {
+    background-color: #202d36;
+}
+.logo-sign {
+    display: inline-block;
+    border-right:1px solid #2e3c45;
+    padding: 10px 20px;
+    padding-right: 5px;
+}
+.logo {
+
+}
+.signature {
+    font-family: 'Lato-Black';
+    float: right;
+    text-transform: uppercase;
+    font-size: 26px;
+    color: #4a555d;
+    margin: 0 8px;
+    padding-top: 7px;
+}
+.small-signature {
+    font-family: 'Lato-Bold';
+    font-size: 11px;
+    color: white;
+    background-color: #11c4a4;
+    margin:0 8px;
+    vertical-align: super;
+}
+.custom-color {
+    font-family: 'Lato-Black';
+    color: #11c4a4;
+}
+.contact {
+    display: inline-block;
+    padding: 10px 15px;
+    color: #000;
+    font-size: 14px;
+}
+.number {
+    font-family: 'Lato-Regular';
+    color: white;
+    float: right;
+    padding:0px 10px;
+    margin:0;
+}
+#profile-settings {
+    display: inline-block;
+    padding-top: 20px;
+}
+.avatar {
+    float: left;
+    padding: 0 10px;
+}
+#dropdown-link {
+    color: #687883;
+    cursor: pointer;
+    padding-left: 16px;
+}
+.caret {
+    vertical-align: bottom !important;
+    border-top: 4px solid #11c4a4 !important;
+    margin-left: 5px;
+    padding-bottom: 7px;
+}
+#post {
+    color: white;
+    float: right;
+    padding-right: 20px;
+}
+#post:hover {
+    text-decoration: none;
+}
+#user-utilits {
+    padding-top:20px;
+
+    border-right: 1px solid #2e3c45;
+}
+#utilits-list {
+    float: left;
+}
+#utilits-list li {
+    padding-right: 10px;
+}
+#utility {
+    color: white;
+}
+.breadcrumb {
+    padding-left: 0 !important;
+}
+.breadcrumb li {
+    font-family: 'Lato-Bold';
+}
+.breadcrumb>li+li:before {
+    content: "" !important;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 3px 5px 3px 10px;
+    border-color: transparent transparent transparent #007bff;
+
+}
+#page_name {
+    font-family: 'Lato-Regular';
+}
+#content_header {
+    padding: 0 !important;
+}
+#content {
+    padding:0 30px;
+    background-color: white;
+}
+.form-group label {
+    font-family: 'Lato-Bold';
+    text-transform: uppercase;
+    color: #8998a3;
+}
+#firstName,
+#lastName {
+    padding:20px;
+}
+#day,
+#month,
+#year {
+    padding:10px 20px;
+}
+#form-subject {
+    font-family: 'Lato-Bold';
+}
+#day_caret,
+#month_caret,
+#year_caret {
+    margin: 0 10px;
+}
+#secondary_first_name,
+#secondary_last_name,
+#gross {
+    padding:20px;
+}
+#gross_btn {
+    padding:10px;
+}
+#address {
+    padding:20px;
+}
+#movingReason {
+    min-height:100px;
+}
+#jobAddress {
+    padding:20px;
+}
+#employerAddress {
+    padding:20px;
+}
+#submitBtn {
+    float: right;
+    margin:15px 0;
+}
+#formSubmit {
+    padding: 5px 20px;
+    border-radius: 15px;
+}
