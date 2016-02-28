@@ -17,12 +17,6 @@
             <img class="phone" src="img/phone-logo.png">
             <p class="number">+1(844)843-6161</p>
         </div>
-        <button type="button" class="navbar-toggle" data-toggle="collaplse" data-target="#navbarCollapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul id="utilits_list" class="nav navbar-nav navbar-left">
                 <li><a id="utility" href="#">Rentals</a></li>
@@ -31,21 +25,24 @@
                 <li><a id="utility" href="#">My Calendar</a></li>
                 <li><a id="utility" href="#">Neighborhoods</a></li>
             </ul>
-            <div class="navbar-header" id="profile-settings">
-                <ul class="nav navbar-nav navbar-left">
-                    <li><img class="avatar" src="img/avatar.png"></li>
-                    <li><a id="dropdown-link" type="button" data-toggle="dropdown" class="dropdown-toggle">My Profile<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Profile Settings</a></li>
-                            <li><a href="#">Change Avatar</a></li>
-                            <li><a href="#">Options</a></li>
-                            <li><a href="#">Exit</a></li>
-                        </ul>
-                    </li>
-                    <li><a id="post" href="#">Post your listings</a></li>
-                </ul>
-            </div>
         </div>
+        <div class="navbar-header" id="profile-settings">
+            <img class="avatar" src="img/avatar.png">
+            <a id="dropdown-link" type="button" data-toggle="dropdown" class="dropdown-toggle">My Profile<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Profile Settings</a></li>
+                    <li><a href="#">Change Avatar</a></li>
+                    <li><a href="#">Options</a></li>
+                    <li><a href="#">Exit</a></li>
+                </ul>
+            <a id="post" href="#">Post your listings</a>
+        </div>
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
     </nav>
     <div class="container" id="content_area">
         <div class="row">
