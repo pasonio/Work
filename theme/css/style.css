@@ -44,14 +44,40 @@ Lato-Black*/
     font-style: normal;
 }
 body {
-    background-color: #f7f7f7;
+    background-color: #f7f7f7 !important;
 }
 input,
 button {
     font-family: 'Lato-Italic' !important;
 }
-#header {
+label {
+    font-family: 'Lato-Bold';
+    text-transform: uppercase;
+    color: #8998a3;
+}
+.nav>li>a {
+    padding-left: 0!important;
+}
+h3 {
+    font-family: 'Lato-Regular';
+}
+#navbar {
+    margin:0;
+    padding: 0 20px;
     background-color: #202d36;
+}
+#navbarCollapse {
+    padding-top: 5px;
+    float: right;
+}
+.logo {
+    float: left;
+}
+#logo_block {
+    padding: 10px 0 10px 0;
+    padding-bottom: 0;
+    float: left;
+    border-right: 1px solid #2e3c45;
 }
 .logo-sign {
     display: inline-block;
@@ -59,17 +85,21 @@ button {
     padding: 10px 20px;
     padding-right: 5px;
 }
-.logo {
-
+.icon-bar {
+    background-color: white;
 }
 .signature {
     font-family: 'Lato-Black';
-    float: right;
     text-transform: uppercase;
+    float: left;
     font-size: 26px;
     color: #4a555d;
     margin: 0 8px;
     padding-top: 7px;
+}
+#phone_block {
+    padding:20px 30px;
+    float: left;
 }
 .small-signature {
     font-family: 'Lato-Bold';
@@ -79,7 +109,8 @@ button {
     margin:0 8px;
     vertical-align: super;
 }
-.custom-color {
+.custom-color,
+#foo_custom_color {
     font-family: 'Lato-Black';
     color: #11c4a4;
 }
@@ -89,53 +120,64 @@ button {
     color: #000;
     font-size: 14px;
 }
+.phone {
+    float: left;
+}
 .number {
     font-family: 'Lato-Regular';
     color: white;
-    float: right;
+    float: left;
     padding:0px 10px;
     margin:0;
 }
 #profile-settings {
-    display: inline-block;
-    padding-top: 20px;
+    padding: 10px 0 0 16px;
+}
+#profile-settings li a {
+    padding-top: 5px;
 }
 .avatar {
     float: left;
-    padding: 0 10px;
+    padding: 0 20px;
 }
 #dropdown-link {
     color: #687883;
     cursor: pointer;
-    padding-left: 16px;
+    padding: 0 30px 10px 0 ;
 }
+#dropdown-link:hover{
+    background-color: transparent;
+}
+
 .caret {
     vertical-align: bottom !important;
     border-top: 4px solid #11c4a4 !important;
-    margin-left: 5px;
     padding-bottom: 7px;
+    margin-left: 5px !important;
 }
 #post {
     color: white;
     float: right;
     padding-right: 20px;
+    padding-top: 5px;
 }
 #post:hover {
     text-decoration: none;
+    background-color: transparent;
 }
-#user-utilits {
-    padding-top:20px;
-
-    border-right: 1px solid #2e3c45;
-}
-#utilits-list {
-    float: left;
-}
-#utilits-list li {
+#utilits_list {
+    border-right:1px solid #2e3c45;
     padding-right: 10px;
+}
+#utilits_list li {
+    padding:0 10px;
+}
+#utilits_list li a:hover {
+    background-color: #4d616e;
 }
 #utility {
     color: white;
+    padding-left: 10px!important;
 }
 .breadcrumb {
     padding-left: 0 !important;
@@ -143,29 +185,40 @@ button {
 .breadcrumb li {
     font-family: 'Lato-Bold';
 }
+.breadcrumb a {
+    color: #8998a3;
+    font-size: 8px;
+    text-transform: uppercase;
+}
 .breadcrumb>li+li:before {
     content: "" !important;
     width: 0;
     height: 0;
-    border-style: solid;
-    border-width: 3px 5px 3px 10px;
-    border-color: transparent transparent transparent #007bff;
-
+    border-left: 6px solid #a4b4bf;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    font-size: 1px;
+    vertical-align: middle;
+}
+#content_area {
+    margin-bottom: 20px;
+}
+#rental_form {
+    box-shadow: 0 0 2px rgba(0,0,0,1);
 }
 #page_name {
     font-family: 'Lato-Regular';
 }
 #content_header {
-    padding: 0 !important;
+    padding: 10px 15px !important; ;
 }
 #content {
-    padding:0 30px;
+    padding:10px 30px;
     background-color: white;
 }
 .form-group label {
     font-family: 'Lato-Bold';
-    text-transform: uppercase;
-    color: #8998a3;
+
 }
 #firstName,
 #lastName {
@@ -178,6 +231,7 @@ button {
 }
 #form-subject {
     font-family: 'Lato-Bold';
+    text-transform: capitalize;
 }
 #day_caret,
 #month_caret,
@@ -191,6 +245,12 @@ button {
 }
 #gross_btn {
     padding:10px;
+}
+.btn-block {
+    text-align: left !important;
+}
+.btn-block .caret {
+    float: right;
 }
 #address {
     padding:20px;
@@ -211,4 +271,41 @@ button {
 #formSubmit {
     padding: 5px 20px;
     border-radius: 15px;
+}
+#footer {
+    background-color: #4d616e;
+    padding:0 10px;
+}
+#footer_title {
+    font-family: 'Lato-Bold';
+    font-size:11px;
+    text-transform: uppercase;
+    color: #a4b4bf;
+    margin-top: 25px;
+}
+#footer_content {
+    font-family: 'Lato-Regular';
+    color: #d9dcde;
+}
+#footer_links {
+    background-color: #202d36;
+    padding:0 10px;
+}
+#foo_link {
+    color: white;
+    padding-right: 20px !important
+}
+#foo_links_list li a:hover {
+    background-color: #4d616e !important;
+}
+#copyrights {
+    color: #a4b4bf;
+    float: left;
+}
+#foo_social_link {
+    float: right;
+    padding: 20px 0;
+}
+#foo_info p {
+    text-align: center;
 }
