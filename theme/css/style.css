@@ -62,9 +62,12 @@ label {
 h3 {
     font-family: 'Lato-Regular';
 }
+.col-xs-4,
+.col-xs-12 {
+    padding-left: 0!important;
+}
 #navbar {
     margin:0;
-    padding: 0 30px;
     background-color: #202d36;
 }
 #navbarCollapse {
@@ -72,12 +75,7 @@ h3 {
 }
 .logo {
     float: left;
-}
-#logo_block {
-    padding: 10px 0 10px 0;
-    padding-bottom: 0;
-    float: left;
-    border-right: 1px solid #2e3c45;
+    padding:10px 10px 10px 0;
 }
 .logo-sign {
     display: inline-block;
@@ -88,17 +86,16 @@ h3 {
 .icon-bar {
     background-color: white;
 }
-#trigger_dropdown {
-    clear: both;
-}
 .signature {
     font-family: 'Lato-Black';
     text-transform: uppercase;
     float: left;
     font-size: 26px;
     color: #4a555d;
-    margin: 0 20px;
-    padding-top: 7px;
+    margin: 0 20px 0 5px;
+    padding-top: 15px;
+    padding-right: 10px;
+    border-right: 1px solid #2e3c45;
 }
 #phone_block {
     padding:22px 20px 0 20px;
@@ -125,23 +122,30 @@ h3 {
 }
 .phone {
     float: left;
+    padding-top: 20px;
 }
 .number {
     font-family: 'Lato-Regular';
     color: white;
     float: left;
-    padding: 0 10px;
+    padding: 20px 10px 0 10px;
     margin:0;
+}
+.dropdown-menu {
+    max-height: 300px !important;
 }
 .dropdown:hover .dropdown-menu {
     display: block;
+}
+#utilits_list .dropdown-menu {
+    max-height: 300px!important;
+    min-width: 50px!important;
 }
 .option {
     padding:10px;
     text-align: center;
 }
 #profile-settings {
-    display: inline-block;
     padding: 10px 0 0 0;
     margin-right: 0;
 }
@@ -150,13 +154,12 @@ h3 {
 }
 .avatar {
     float: left;
-    padding: 0 20px;
+    padding: 10px 20px 0 20px;
 }
 #dropdown-link {
     color: #687883;
     cursor: pointer;
-    float: left;
-    padding: 0 30px 10px 0 ;
+    padding: 10px 30px 10px 0 ;
 }
 #dropdown-link:hover{
     background-color: transparent;
@@ -168,10 +171,15 @@ h3 {
     padding-bottom: 7px;
     margin-left: 5px !important;
 }
+.bs-caret .caret {
+    content: url('../img/customarrow.png');
+    border-top: none !important;
+    width:20px;
+    height:15px;
+}
 #post {
     color: white;
-    float: right !important;
-    padding-top: 5px;
+    padding-top: 10px;
     padding-right: 0;
 }
 #post:hover {
@@ -187,7 +195,7 @@ h3 {
 }
 #utility {
     color: white;
-    padding: 15px 30px;
+    padding: 15px 15px !important;
 }
 .breadcrumb {
     padding-left: 0 !important;
@@ -234,25 +242,37 @@ h3 {
 #lastName {
     padding:20px;
 }
-.day,
-.month,
-.year,
-.dayIn,
-.monthIn,
-.yearIn,
-.dayOut,
-.monthOut,
-.yearOut,
-.dayStart,
-.monthStart,
-.yearStart
+.day button,
+.month button,
+.year button
 {
     padding:10px 20px;
-    color: #8998a3;
+    color: #8998a3!important;
 }
 #form-subject {
     font-family: 'Lato-Bold';
     text-transform: capitalize;
+}
+.day {
+    width:28% !important;
+    padding-top: 0!important;
+}
+.day .dropdown-toggle {
+    padding:10px 10px 10px 20px;
+}
+.month {
+    width:41% !important;
+    padding-top: 0 !important;
+}
+.month .dropdown-toggle {
+    padding:11px 20px 10px 25px;
+}
+.year {
+    width: 28% !important;
+    padding-top: 0 !important;
+}
+.year .dropdown-toggle {
+    padding: 10px 10px 10px 20px;
 }
 #day_caret,
 #month_caret,
@@ -302,6 +322,7 @@ h3 {
 #state,
 #zip_code,
 #relation,
+#relation,
 #workPhone,
 #cellPhone
 {
@@ -310,8 +331,9 @@ h3 {
 #relation {
     font-family: 'Lato-Bold' !important;
 }
-#relation_btn {
+.relation_btn button {
     font-family: 'Lato-Bold' !important;
+    padding: 10px;
 }
 #submitBtn {
     float: right;
@@ -379,4 +401,50 @@ h3 {
 }
 #foo_info p {
     text-align: center;
+}
+@media only screen and (max-width: 1219px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-left,.navbar-right {
+        float: none !important;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-fixed-top {
+        top: 0;
+        border-width: 0 0 1px;
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin-top: 7.5px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .collapse.in{
+        display:block !important;
+    }
+    .navbar-nav .open .dropdown-menu {
+        position: static;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: transparent;
+        border: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
 }

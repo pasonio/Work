@@ -2,7 +2,8 @@ jQuery(document).ready(function($) {
     var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
 
-    for (i = new Date().getFullYear(); i > 1990; i--) {
+    var i;
+    for (i = new Date().getFullYear() - 16; i > 1970; i--) {
         $('.year').append($('<option />').val(i).html(i));
     }
 
@@ -10,12 +11,16 @@ jQuery(document).ready(function($) {
         $('.month').append($('<option />').val(i).html(monthNames[i-1]));
     }
     updateNumberOfDays();
+    $('.selectpicker').selectpicker({
+        style: 'btn-default'
+    });
+
 });
 
 function updateNumberOfDays(){
-    month = $('.month').val();
-    year = $('.year').val();
-    day = daysInMonth(month, year);
+    var month = $('.month').val();
+    var year = $('.year').val();
+    var day = daysInMonth(month, year);
 
     for(i=1; i < day+1 ; i++){
         $('.day').append($('<option />').val(i).html(i));
